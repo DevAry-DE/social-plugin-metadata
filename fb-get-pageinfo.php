@@ -261,7 +261,8 @@ class Ole1986_FacebokPageInfo extends WP_Widget
                     });
             }
 
-            window.addEventListener("message", (event) => {
+            jQuery(function() {
+                window.addEventListener("message", (event) => {
                 console.log(event);
                 // received postMessage from iframe
                 if (event.origin.match(/cloud86\.de/)) {
@@ -269,7 +270,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
                 }
                 
             }, false);
-
+            });
             
         </script>
         <h2><?php _e('Facebook page info', 'fb-get-pageinfo') ?></h2>
@@ -277,7 +278,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages', 'fb-get-pageinfo') ?></p>
         </div>
         <div id="fb-gateway-frame" style="margin: 1em">
-            <iframe src="<?php echo self::$FB_CLOUD86_GATEWAY ?>" width="400px" height="500px">
+            <iframe src="<?php echo self::$FB_CLOUD86_GATEWAY ?>" width="400px" height="250px">
             </iframe>
         </div>
         <?php
