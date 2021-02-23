@@ -17,7 +17,13 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     static $FB_CLOUD86_GATEWAY = "https://test.cloud86.de/facebook-gateway/";
     static $WP_OPTION_PAGES = 'fb_get_page_info';
 
+    public $supportedOptions = [
+        'BusinessHours' => 'Business hours',
+        'About' => 'About'
+    ];
+
     private $title = '';
+    private $option = '';
     private $fb_page;
     private $fb_show_page;
 
@@ -28,7 +34,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     {
         parent::__construct('fb-get-pageinfo', __('Facebook page info Widget', 'fb-get-pageinfo'), ['description' => __('Used to output several information gathered from a facebook page', 'fb-get-pageinfo')]);
 
-        //add_action('wp_ajax_fb_get_pages', [$this, 'fb_get_pages']);
+        // used to save the pages via ajaxed (only from admin area)
         add_action('wp_ajax_fb_save_pages', [$this, 'fb_save_pages']);
     }
 
@@ -50,10 +56,8 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             )
         );
 
-        if ($currentPage != null) {
-            $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
-        }
-
+        $result = $this->processContentFromOption($currentPage);
+        
         // before and after widget arguments are defined by themes
         echo $args['before_widget'];
         echo $args['before_title'] . $this->title . $args['after_title'];
@@ -64,15 +68,17 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             .fb-pageinfo-days { display: flex; justify-content: space-between; }
         </style>
         <div id="fb-pageinfo-widget">
-            <?php if (!empty($currentPage) && !empty($result['hours'])) : ?>
+            <?php if (empty($result['error'])) : ?>
                 <?php if ($this->fb_show_page) : ?>
                     <h4 class="fb-pageinfo-title"><?php echo $currentPage['name']; ?></h4>
                 <?php endif; ?>
-                <div class="fb-pageinfo-hours">
-                    <?php $this->displayHoursFromPage($result); ?>
-                </div>
-            <?php elseif (empty($result['error'])) : ?>
-                <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
+                    <?php 
+                    if (!empty($this->option)) {
+                        $this->{'show' . $this->option}($result);
+                    } else {
+                        echo "<div><small>No option given for ". __('Facebook page info Widget', 'fb-get-pageinfo') ."<small></div>";
+                    }
+                    ?>
             <?php else: ?>
                 <div><?php _e('Facebook page info Widget', 'fb-get-pageinfo') ?></div>
                 <?php if (!empty($result['error'])) : ?>
@@ -86,15 +92,35 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         echo $args['after_widget'];
     }
 
+    private function processContentFromOption($currentPage) {
+        if (empty($currentPage)) {
+            return;
+        }
+
+        switch($this->option) {
+            case 'BusinessHours':
+                $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
+                break;
+            case 'About':
+                $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
+                break;
+        }
+
+        return $result;
+    }
+
     /**
      * Parse the hours taken from facebook graph api and output in proper HTML format
      * 
      * @param array $page the page properties received from facebook api
      */
-    public function displayHoursFromPage($page)
+    public function showBusinessHours($page)
     {
         if (empty($page['hours'])) {
-            return '';
+            ?>
+            <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
+            <?php
+            return;
         }
         
         $result = [];
@@ -128,6 +154,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             'sun' => __('Sunday', 'fb-get-pageinfo'),
         ];
 
+        echo '<div class="fb-pageinfo-hours">';
         foreach ($result as $k => $v) {
             echo '<div class="fb-pageinfo-days">';
             echo "<div>" . $mapDayNames[$k] . "</div>";
@@ -138,6 +165,18 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             echo '</div>';
             echo '</div>';
         }
+        echo '</div>';
+    }
+
+    public function showAbout($page)
+    {
+        if (empty($page['about'])) {
+            ?>
+            <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
+            <?php
+            return;
+        }
+        echo '<div class="fb-pageinfo-about">'.$page['about'].'</div>';
     }
 
     /**
@@ -148,7 +187,6 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     public function form($instance)
     {
         $this->parseSettings($instance);
-
         $pages = get_option(self::$WP_OPTION_PAGES, []);
 
         ?>
@@ -158,11 +196,22 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('fb_page'); ?>"><?php _e('Facebook Page:', 'fb-get-pageinfo');?></label>
-            <select name="<?php echo $this->get_field_name('fb_page'); ?>" id="fbPages">
+            <select name="<?php echo $this->get_field_name('fb_page'); ?>">
                 <option value="">[select page]</option>
                 <?php
                 foreach ($pages as $value) {
                     echo '<option value='.$value['id'].' '. (($this->fb_page == $value['id']) ? 'selected':'') .'>'.$value['name'].'</option>';
+                }
+                ?>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('option'); ?>"><?php _e('Facebook Content:', 'fb-get-pageinfo');?></label>
+            <select name="<?php echo $this->get_field_name('option'); ?>">
+                <option value="">[select content]</option>
+                <?php
+                foreach ($this->supportedOptions as $k => $v) {
+                    echo '<option value='.$k.' '. (($this->option == $k) ? 'selected':'') .'>'. __($v, 'fb-get-pageinfo').'</option>';
                 }
                 ?>
             </select>
@@ -182,6 +231,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     private function parseSettings($instance)
     {
         $this->title = isset($instance['title']) ? esc_attr($instance['title']) : "";
+        $this->option = isset($instance['option']) ? esc_attr($instance['option']) : "";
         $this->fb_page = isset($instance['fb_page']) ? esc_attr($instance['fb_page']) : "";
         $this->fb_show_page = !empty($instance['fb_show_page']) ?true : false;
     }

@@ -32,6 +32,9 @@ msgstr "Facebook Seite:"
 msgid "Show page name:"
 msgstr "Seitenname anzeigen:"
 
+msgid "Business hours"
+msgstr "Geschäftszeiten"
+
 msgid "Monday"
 msgstr "Montag"
 
