@@ -1,10 +1,13 @@
 <?php
-/*
-Plugin Name: Facebook page info
-Description: Display facebook related page information
-Version:     1.0.0
-Author:      ole1986
-Text Domain: fb-get-pageinfo
+/**
+ * Plugin Name: Facebook page info
+ * Description: Display facebook related page information
+ * Version:     1.0.0
+ * Author:      ole1986
+ * License: MIT
+ * Requires at least: 5.0
+ * Requires PHP: 7.0
+ * Text Domain: fb-get-pageinfo
  */
 
 defined('ABSPATH') or die('No script kiddies please!');
@@ -61,16 +64,21 @@ class Ole1986_FacebokPageInfo extends WP_Widget
             .fb-pageinfo-days { display: flex; justify-content: space-between; }
         </style>
         <div id="fb-pageinfo-widget">
-            <?php if (!empty($currentPage) && !empty($result)): ?>
-                <?php if ($this->fb_show_page): ?>
+            <?php if (!empty($currentPage) && !empty($result['hours'])) : ?>
+                <?php if ($this->fb_show_page) : ?>
                     <h4 class="fb-pageinfo-title"><?php echo $currentPage['name']; ?></h4>
                 <?php endif; ?>
-                <div><strong><?php _e('Opening hours', 'fb-get-pageinfo') ?></strong></div>
                 <div class="fb-pageinfo-hours">
                     <?php $this->displayHoursFromPage($result); ?>
                 </div>
+            <?php elseif (empty($result['error'])) : ?>
+                <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
             <?php else: ?>
-                <div>An error occured</div>
+                <div><?php _e('Facebook page info Widget', 'fb-get-pageinfo') ?></div>
+                <?php if (!empty($result['error'])) : ?>
+                    <div><small><?php echo $result['error']['message'] ?></small></div>
+                <?php endif; ?>
+                
             <?php endif; ?>
         </div>
 
@@ -78,6 +86,11 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         echo $args['after_widget'];
     }
 
+    /**
+     * Parse the hours taken from facebook graph api and output in proper HTML format
+     * 
+     * @param array $page the page properties received from facebook api
+     */
     public function displayHoursFromPage($page)
     {
         if (empty($page['hours'])) {
@@ -128,11 +141,9 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     }
 
     /**
-     * Show the widget form in admin area containing the following input arguments
-     *
-     * - Title
-     * - Category
-     * - Number of items to show
+     * Show the widget form in admin area to manage the widget settings
+     * 
+     * @param array $instance the settings saved as array
      */
     public function form($instance)
     {
@@ -163,16 +174,16 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         <?php
     }
 
+    /**
+     * Parse the widget settings into its current class object
+     * 
+     * @param array $instance the widget settings
+     */
     private function parseSettings($instance)
     {
         $this->title = isset($instance['title']) ? esc_attr($instance['title']) : "";
         $this->fb_page = isset($instance['fb_page']) ? esc_attr($instance['fb_page']) : "";
         $this->fb_show_page = !empty($instance['fb_show_page']) ?true : false;
-    }
-
-    public function update($new, $old)
-    {
-        return $new;
     }
 
     /**
@@ -200,6 +211,9 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         return $decode_output;
     }
 
+    /**
+     * The ajax call being used to save the pages received by the fb-gateway
+     */
     public function fb_save_pages()
     {
         $ok = $this->savePages($_POST['data']);
@@ -209,6 +223,11 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         wp_die();
     }
 
+    /**
+     * Save the pages as wordpress option
+     * 
+     * @param array $new_value all known pages selected by the client
+     */
     private function savePages($new_value)
     {
         if (empty($new_value)) {
@@ -226,11 +245,17 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         return true;
     }
 
+    /**
+     * Populate the Settings menu entry
+     */
     public static function settings_page()
     {
         add_options_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'manage_options', 'fb-get-pageinfo-plugin', ['Ole1986_FacebokPageInfo', 'settings_page_content']);
     }
     
+    /**
+     * Populate the settings content used to gather the facebook pages from fb-gateway
+     */
     public static function settings_page_content()
     {
         $pages = get_option(self::$WP_OPTION_PAGES, []);
