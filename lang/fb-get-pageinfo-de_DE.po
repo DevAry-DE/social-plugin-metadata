@@ -65,5 +65,8 @@ msgstr "Seitenname anzeigen"
 msgid "Currently there are no business hours given in Facebook"
 msgstr "Derzeit sind keine Geschäftszeiten in Facebook angegeben"
 
+msgid "Something went wrong. Please choose at least one facebook page after login"
+msgstr "Etwas ist schief gelaufen. Bitte wählen Sie mindestens eine Facebook Seite nach dem einloggen aus"
+
 msgid "Please follow the instruction below to syncronize your facebook pages"
 msgstr "Bitte folgen Sie den nachstehenden Instruktionen um die Facebook Seiten zu synchronisieren"

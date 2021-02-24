@@ -36,6 +36,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
 
         // used to save the pages via ajaxed (only from admin area)
         add_action('wp_ajax_fb_save_pages', [$this, 'fb_save_pages']);
+        add_action('wp_ajax_fb_get_page_options', [$this, 'fb_get_page_options']);
     }
 
     /**
@@ -92,18 +93,19 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         echo $args['after_widget'];
     }
 
-    private function processContentFromOption($currentPage) {
+    private function processContentFromOption($currentPage)
+    {
         if (empty($currentPage)) {
             return;
         }
 
         switch($this->option) {
-            case 'BusinessHours':
-                $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
-                break;
-            case 'About':
-                $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
-                break;
+        case 'BusinessHours':
+            $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
+            break;
+        case 'About':
+            $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
+            break;
         }
 
         return $result;
@@ -261,6 +263,19 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         return $decode_output;
     }
 
+    public function fb_get_page_options()
+    {
+        
+        $result = get_option(self::$WP_OPTION_PAGES, []);
+
+        if (empty($_POST['pretty'])) {
+            header('Content-Type: application/json');   
+        }
+
+        echo json_encode($result, JSON_PRETTY_PRINT);
+        
+        wp_die();
+    }
     /**
      * The ajax call being used to save the pages received by the fb-gateway
      */
@@ -300,7 +315,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
      */
     public static function settings_page()
     {
-        add_options_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'manage_options', 'fb-get-pageinfo-plugin', ['Ole1986_FacebokPageInfo', 'settings_page_content']);
+        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', ['Ole1986_FacebokPageInfo', 'settings_page_content'], '', 4);
     }
     
     /**
@@ -311,6 +326,13 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         $pages = get_option(self::$WP_OPTION_PAGES, []);
         ?>
         <script>
+            var fbRawPages = function() {
+                jQuery.post('<?php echo admin_url('admin-ajax.php'); ?>', { action: 'fb_get_page_options', pretty: '1' })
+                    .done(function(response) {
+                        jQuery('#rawdata').html(response);
+                    });
+            }
+
             var fbSavePages = function(data) {
                 var alert = jQuery('#fb-pageinfo-sync');
                 var frame = jQuery('#fb-gateway-frame');
@@ -323,7 +345,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
                     .done(function(response){
                         if (!response) {
                             alert.addClass('error');
-                            alert.find('p').html('Something went wrong. Please choose at least one page after login');    
+                            alert.find('p').html('<?php _e('Something went wrong. Please choose at least one facebook page after login', 'fb-get-pageinfo') ?>');    
                             frame.show();
                             return;
                         }
@@ -352,9 +374,44 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         <div id="fb-pageinfo-sync" class="notice">
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages', 'fb-get-pageinfo') ?></p>
         </div>
-        <div id="fb-gateway-frame" style="margin: 1em">
-            <iframe src="<?php echo self::$FB_CLOUD86_GATEWAY ?>" width="400px" height="250px">
-            </iframe>
+        <div style="display: flex;">
+            <div id="fb-gateway-frame" style="margin: 1em">
+                <iframe src="<?php echo self::$FB_CLOUD86_GATEWAY ?>" width="400px" height="250px"></iframe>
+            </div>
+            <div>
+                <h2>Anleitung</h2>
+                <p>Zur Syncronisierung und Ausgabe von Metadaten (Öffnungszeiten, Titel, Beschreibung) aus Facebook Seiten.</p>
+                <div style="font-family: monospace">
+                    <ol>
+                        <li>Verwenden Sie den Knopf "Login and Sync" um sich mit Ihrem Facebook Konto anzumelden und die Synchronisierung Ihrer Facebook Seiten zu starten.</li>
+                        <li>
+                            Sie werden aufgefordert die Facebook App "Cloud 86 / Link Page" mit Ihrem Profil zu verbinden.<br />
+                            Mit Ihrer Zustimmmung genehmigen Sie der App ausgewählte Facebook Seiten über das Plugin <strong><?php _e('Facebook page info', 'fb-get-pageinfo') ?></strong> zu verwenden und Metadaten auszugeben.
+                        </li>
+                        <li>
+                            Nach der Freigabe und abgeschlossener "Synchronisierung" wechseln Sie bitte zum Abschnitt Design / <a href="widgets.php">Widgets</a>.<br />
+                            Von dort aus können Sie Ihr  <?php _e('Facebook page info Widget', 'fb-get-pageinfo') ?> nach Ihren bedürfnissen anpassen.
+                        </li>
+                        <li>
+                            Schieben Sie dazu das Widget in eines der Widget Bereiche, geben die gewünschte Facebook Seite sowie Einstellung an und speichern die Einstellung.<br />
+                            Anschließend wird das Widget mit den entprechenden Daten auf der Frontseite geladen
+                        </li>
+                    </ol>
+                    <div>HINWEIS</div>
+                    <div>
+                        Abhängig von dem Inhalt der ausgewählte Facebook Seite kann die Ausgabe sich unterscheiden (oder leer sein).<br />
+                        Vergewissern Sie sich, das die ausgewählte Facebook Seite Ihre angeforderten Metadaten (z.B. Öffnungszeiten) enthält.
+                    </div>
+                </div>
+                <h2>Rechtliche Hinweise</h2>
+                <p>
+                    <strong>Cloud 86 selbst speichert keine Facebook Daten. <br />Es werden ausschließlich technisch erforderliche Informationen AUF DIESEM SERVER (<?php echo $_SERVER['HTTP_HOST'] ?>) als Wordpress Option unter "<?php echo self::$WP_OPTION_PAGES; ?>" abgelegt</strong>
+                </p>
+                <div id="rawdata" style="font-family: monospace; white-space: pre; background-color: white; padding: 1em;">
+                    <a href="#" onclick="fbRawPages()">DATEN ANZEIGEN</a>
+                </div>
+                <p>WEITER INFORMATIONEN ZUM DATENSCHUTZ FINDEN SIE <a href="https://www.cloud86.de/datenschutzerklaerung" target="_blank">HIER</a></p>
+            </div>
         </div>
         <?php
     }
