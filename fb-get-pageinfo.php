@@ -22,7 +22,7 @@ class Ole1986_FacebokPageInfo
     /**
      * The frontend page where the [fb-gateway] shortcode is located (provided by the fb-gateway plugin)
      */
-    static $FB_GATEWAY_URL = "https://test.cloud86.de/facebook-gateway/";
+    static $FB_GATEWAY_URL = "https://www.cloud86.de/facebook-gateway/";
 
     /**
      * The wordpress option where the facebook pages (long lived page token) are bing stored
@@ -50,12 +50,17 @@ class Ole1986_FacebokPageInfo
         return self::$instance;
     }
 
+    private $isTesting = false;
+
     /**
      * constructor overload of the WP_Widget class to initialize the media widget
      */
     public function __construct()
     {
         load_plugin_textdomain('fb-get-pageinfo', false, dirname(plugin_basename(__FILE__)) . '/lang/');
+
+        // check if currently is setup for testing
+        $this->checkTesting();
 
         add_action('widgets_init', function () {
             register_widget('Ole1986_FacebokPageInfoWidget');
@@ -68,6 +73,14 @@ class Ole1986_FacebokPageInfo
         add_action('wp_ajax_fb_get_page_options', [$this, 'fb_get_page_options']);
 
         $this->registerShortcodes();
+    }
+
+    private function checkTesting() {
+        $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
+
+        if ($this->isTesting) {
+            self::$FB_GATEWAY_URL = "https://test.cloud86.de/facebook-gateway";
+        }
     }
 
     private function registerShortcodes()
@@ -378,6 +391,11 @@ class Ole1986_FacebokPageInfo
         <div style="display: flex;">
             <div id="fb-gateway-frame" style="margin: 1em">
                 <iframe src="<?php echo self::$FB_GATEWAY_URL ?>" width="400px" height="250px"></iframe>
+                <?php if ($this->isTesting) : ?>
+                <div>
+                    <small>Debugging is enabled connecting to <?php echo self::$FB_GATEWAY_URL ?></small>
+                </div>
+                <?php endif; ?>
             </div>
             <div>
                 <h2>Anleitung</h2>
