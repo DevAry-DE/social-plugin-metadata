@@ -20,6 +20,9 @@ msgstr "Facebook Seiteninfo Widget"
 msgid "Facebook page info"
 msgstr "Facebook Seiteninfo"
 
+msgid "Used to display facebook related page information as widget or shortcode (Business hours, About Us, Last Post)"
+msgstr "Wird verwendet um Facebook Seiteninformationen als Widget oder Shortcode anzuzeigen (Z.b. Öffnungszeiten, Über uns, Letzter Beitrag)"
+
 msgid "Used to output several information gathered from a facebook page"
 msgstr "Verwendet eine Facebook Seite um verschiedene informationen davon darzustellen"
 
@@ -58,6 +61,18 @@ msgstr "Sonntag"
 
 msgid "Opening hours"
 msgstr "Öffnungszeiten"
+
+msgid "%i minutes ago"
+msgstr "vor %i minuten"
+
+msgid "%h hours ago"
+msgstr "vor %h Stunden"
+
+msgid "%d days ago"
+msgstr "vor %d Tagen"
+
+msgid "Open on Facebook"
+msgstr "Auf Facebook öffnen"
 
 msgid "Show page name"
 msgstr "Seitenname anzeigen"

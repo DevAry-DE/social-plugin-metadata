@@ -1,110 +1,135 @@
 <?php
 /**
  * Plugin Name: Facebook page info
- * Description: Display facebook related page information
+ * Description: Used to display facebook related page information as widget or shortcode (Business hours, About Us, Last Post)
  * Version:     1.0.0
  * Author:      ole1986
  * License: MIT
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Text Domain: fb-get-pageinfo
+ * 
+ * @author  Ole Köckemann <ole.koeckemann@gmail.com>
+ * @license MIT
  */
 
 defined('ABSPATH') or die('No script kiddies please!');
 
-class Ole1986_FacebokPageInfo extends WP_Widget
+require_once 'widget.php';
+
+class Ole1986_FacebokPageInfo
 {
-    static $FB_CLOUD86_GATEWAY = "https://test.cloud86.de/facebook-gateway/";
+    /**
+     * The frontend page where the [fb-gateway] shortcode is located (provided by the fb-gateway plugin)
+     */
+    static $FB_GATEWAY_URL = "https://test.cloud86.de/facebook-gateway/";
+
+    /**
+     * The wordpress option where the facebook pages (long lived page token) are bing stored
+     */
     static $WP_OPTION_PAGES = 'fb_get_page_info';
 
-    public $supportedOptions = [
-        'BusinessHours' => 'Business hours',
-        'About' => 'About'
-    ];
+     /**
+      * The unique instance of the plugin.
+      *
+      * @var Ole1986_FacebokPageInfo
+      */
+    private static $instance;
 
-    private $title = '';
-    private $option = '';
-    private $fb_page;
-    private $fb_show_page;
+    /**
+     * Gets an instance of our plugin.
+     *
+     * @return Ole1986_FacebokPageInfo
+     */
+    public static function get_instance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
 
     /**
      * constructor overload of the WP_Widget class to initialize the media widget
      */
     public function __construct()
     {
-        parent::__construct('fb-get-pageinfo', __('Facebook page info Widget', 'fb-get-pageinfo'), ['description' => __('Used to output several information gathered from a facebook page', 'fb-get-pageinfo')]);
+        load_plugin_textdomain('fb-get-pageinfo', false, dirname(plugin_basename(__FILE__)) . '/lang/');
+
+        add_action('widgets_init', function () {
+            register_widget('Ole1986_FacebokPageInfoWidget');
+        });
+
+        add_action('admin_menu', [$this, 'settings_page']);
 
         // used to save the pages via ajaxed (only from admin area)
         add_action('wp_ajax_fb_save_pages', [$this, 'fb_save_pages']);
         add_action('wp_ajax_fb_get_page_options', [$this, 'fb_get_page_options']);
+
+        $this->registerShortcodes();
     }
 
-    /**
-     * Display the widget onto the frontend
-     */
-    public function widget($args, $instance)
+    private function registerShortcodes()
     {
-        $this->parseSettings($instance);
+        // [fb-pageinfo-businesshours page_id="<page>"]
+        add_shortcode('fb-pageinfo-businesshours', function ($atts, $content, $tag) {
+            return $this->shortcodeCallback('BusinessHours', $atts, $content, $tag);
+        });
 
+        // [fb-pageinfo-about page_id="<page>"]
+        add_shortcode('fb-pageinfo-about', function ($atts, $content, $tag) {
+            return $this->shortcodeCallback('About', $atts, $content, $tag);
+        });
+
+        // [fb-pageinfo-lastpost page_id="<page>"]
+        add_shortcode('fb-pageinfo-lastpost', function ($atts, $content, $tag) {
+            return $this->shortcodeCallback('LastPost', $atts, $content, $tag);
+        });
+    }
+
+    private function shortcodeCallback($option, $atts, $content, $tag)
+    {
         $pages = get_option(self::$WP_OPTION_PAGES, []);
+
+        $page_id = $atts['page_id'];
 
         $currentPage = array_pop(
             array_filter(
                 $pages,
-                function ($v) {
-                    return $v['id'] == $this->fb_page;
+                function ($v) use ($page_id) {
+                    return $v['id'] == $page_id;
                 }
             )
         );
 
-        $result = $this->processContentFromOption($currentPage);
+        $result = $this->processContentFromOption($currentPage, $option);
+
+        ob_start();
         
-        // before and after widget arguments are defined by themes
-        echo $args['before_widget'];
-        echo $args['before_title'] . $this->title . $args['after_title'];
-        ?>
+        $this->{'show' . $option}($result);
+        $output_string = ob_get_contents();
 
-        <style>
-            .fb-pageinfo-hours { display: flex; flex-direction: column; }
-            .fb-pageinfo-days { display: flex; justify-content: space-between; }
-        </style>
-        <div id="fb-pageinfo-widget">
-            <?php if (empty($result['error'])) : ?>
-                <?php if ($this->fb_show_page) : ?>
-                    <h4 class="fb-pageinfo-title"><?php echo $currentPage['name']; ?></h4>
-                <?php endif; ?>
-                    <?php 
-                    if (!empty($this->option)) {
-                        $this->{'show' . $this->option}($result);
-                    } else {
-                        echo "<div><small>No option given for ". __('Facebook page info Widget', 'fb-get-pageinfo') ."<small></div>";
-                    }
-                    ?>
-            <?php else: ?>
-                <div><?php _e('Facebook page info Widget', 'fb-get-pageinfo') ?></div>
-                <?php if (!empty($result['error'])) : ?>
-                    <div><small><?php echo $result['error']['message'] ?></small></div>
-                <?php endif; ?>
-                
-            <?php endif; ?>
-        </div>
+        ob_end_clean();
 
-        <?php
-        echo $args['after_widget'];
+        return $output_string;
     }
 
-    private function processContentFromOption($currentPage)
+    public function processContentFromOption($currentPage, $option)
     {
         if (empty($currentPage)) {
             return;
         }
 
-        switch($this->option) {
+        switch($option) {
         case 'BusinessHours':
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
             break;
         case 'About':
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
+            break;
+        case 'LastPost':
+            $result = $this->fbGraphRequest($currentPage['id'] . '/posts?fields=message,permalink_url,created_time&limit=1&access_token=' . $currentPage['access_token']);
             break;
         }
 
@@ -181,71 +206,47 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         echo '<div class="fb-pageinfo-about">'.$page['about'].'</div>';
     }
 
-    /**
-     * Show the widget form in admin area to manage the widget settings
-     * 
-     * @param array $instance the settings saved as array
-     */
-    public function form($instance)
+    public function showLastPost($page)
     {
-        $this->parseSettings($instance);
-        $pages = get_option(self::$WP_OPTION_PAGES, []);
+        if (empty($page['data'])) {
+            ?>
+            <div style="text-align: center"><?php _e('No Facebook posts found', 'fb-get-pageinfo') ?></div>
+            <?php
+            return;
+        }
+
+        $lastPost = array_pop($page['data']);
+
+        $created = new DateTime($lastPost['created_time']);
+        $now = new DateTime();
+
+        $diffSeconds = $now->getTimestamp() - $created->getTimestamp();
+
+        $diff = $now->diff($created);
+        
+        $friendlyDiff = $diff->format(__('%i minutes ago', 'fb-get-pageinfo'));
+
+        if ($diffSeconds > (60 * 60)) {
+            $friendlyDiff = $diff->format(__('%h hours ago', 'fb-get-pageinfo'));
+        }
+        if ($diffSeconds > (60 * 60 * 24)) {
+            $friendlyDiff = $diff->format(__('%d days ago', 'fb-get-pageinfo'));
+        }
+        if ($diffSeconds > (60 * 60 * 24 * 3)) {
+            $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
+        }
 
         ?>
-        <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'fb-get-pageinfo');?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $this->title ?>" />
-        </p>
-        <p>
-            <label for="<?php echo $this->get_field_id('fb_page'); ?>"><?php _e('Facebook Page:', 'fb-get-pageinfo');?></label>
-            <select name="<?php echo $this->get_field_name('fb_page'); ?>">
-                <option value="">[select page]</option>
-                <?php
-                foreach ($pages as $value) {
-                    echo '<option value='.$value['id'].' '. (($this->fb_page == $value['id']) ? 'selected':'') .'>'.$value['name'].'</option>';
-                }
-                ?>
-            </select>
-        </p>
-        <p>
-            <label for="<?php echo $this->get_field_id('option'); ?>"><?php _e('Facebook Content:', 'fb-get-pageinfo');?></label>
-            <select name="<?php echo $this->get_field_name('option'); ?>">
-                <option value="">[select content]</option>
-                <?php
-                foreach ($this->supportedOptions as $k => $v) {
-                    echo '<option value='.$k.' '. (($this->option == $k) ? 'selected':'') .'>'. __($v, 'fb-get-pageinfo').'</option>';
-                }
-                ?>
-            </select>
-        </p>
-        <p>
-            <label for="<?php echo $this->get_field_id('fb_show_page'); ?>"><?php _e('Show page name:', 'fb-get-pageinfo');?></label>
-            <input type="checkbox" id="<?php echo $this->get_field_id('fb_show_page'); ?>" name="<?php echo $this->get_field_name('fb_show_page'); ?>" type="text" <?php echo ($this->fb_show_page ? 'checked' : '') ?> value="1" />
-        </p>
+        <div class="fb-pageinfo-lastpost">
+            <?php echo $lastPost['message'] ?>
+            <div class="fb-pageinfo-lastpost-footer">
+                <div class="fb-pageinfo-lastpost-link">
+                    <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook', 'fb-get-pageinfo') ?></a></small>
+                </div>
+                <div class="fb-pageinfo-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
+            </div>
+        </div>
         <?php
-    }
-
-    /**
-     * Parse the widget settings into its current class object
-     * 
-     * @param array $instance the widget settings
-     */
-    private function parseSettings($instance)
-    {
-        $this->title = isset($instance['title']) ? esc_attr($instance['title']) : "";
-        $this->option = isset($instance['option']) ? esc_attr($instance['option']) : "";
-        $this->fb_page = isset($instance['fb_page']) ? esc_attr($instance['fb_page']) : "";
-        $this->fb_show_page = !empty($instance['fb_show_page']) ?true : false;
-    }
-
-    /**
-     * initialize the widget class and text-domain part
-     */
-    public static function load()
-    {
-        load_plugin_textdomain('fb-get-pageinfo', false, dirname(plugin_basename(__FILE__)) . '/lang/');
-        // register self as a widget
-        register_widget(get_class());
     }
 
     private function fbGraphRequest($url)
@@ -313,15 +314,15 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     /**
      * Populate the Settings menu entry
      */
-    public static function settings_page()
+    public function settings_page()
     {
-        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', ['Ole1986_FacebokPageInfo', 'settings_page_content'], '', 4);
+        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
     }
     
     /**
      * Populate the settings content used to gather the facebook pages from fb-gateway
      */
-    public static function settings_page_content()
+    public function settings_page_content()
     {
         $pages = get_option(self::$WP_OPTION_PAGES, []);
         ?>
@@ -376,7 +377,7 @@ class Ole1986_FacebokPageInfo extends WP_Widget
         </div>
         <div style="display: flex;">
             <div id="fb-gateway-frame" style="margin: 1em">
-                <iframe src="<?php echo self::$FB_CLOUD86_GATEWAY ?>" width="400px" height="250px"></iframe>
+                <iframe src="<?php echo self::$FB_GATEWAY_URL ?>" width="400px" height="250px"></iframe>
             </div>
             <div>
                 <h2>Anleitung</h2>
@@ -417,7 +418,6 @@ class Ole1986_FacebokPageInfo extends WP_Widget
     }
 }
 
-add_action('widgets_init', ['Ole1986_FacebokPageInfo', 'load']);
-add_action('admin_menu', ['Ole1986_FacebokPageInfo', 'settings_page']);
+Ole1986_FacebokPageInfo::get_instance();
 
 ?>

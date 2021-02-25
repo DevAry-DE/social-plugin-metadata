@@ -10,7 +10,18 @@ Display page info from facebook pages
 
 == Description ==
 
-Display page info from facebook pages
+Display page info from facebook pages using either a widget or as shortcode.
+Currently supported information are
+
+* Business hours
+* Page about text
+* Last posted entry (incl. text, link and date)
+
+For shortcodes the following names are available
+
+* [fb-pageinfo-businesshours page_id="<page>"]
+* [fb-pageinfo-about page_id="<page>"]
+* [fb-pageinfo-lastpost page_id="<page>"]
 
 == Installation ==
 
