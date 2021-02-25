@@ -1,6 +1,7 @@
 /assets
 /.git
 /.github
+/Resources
 
 .distignore
 .gitignore
