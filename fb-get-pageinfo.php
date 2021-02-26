@@ -75,7 +75,8 @@ class Ole1986_FacebokPageInfo
         $this->registerShortcodes();
     }
 
-    private function checkTesting() {
+    private function checkTesting()
+    {
         $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
 
         if ($this->isTesting) {
@@ -152,7 +153,8 @@ class Ole1986_FacebokPageInfo
     /**
      * Parse the hours taken from facebook graph api and output in proper HTML format
      * 
-     * @param array $page the page properties received from facebook api
+     * @param array  $page          the page properties received from facebook api
+     * @param string $empty_message optional message to use when result is empty
      */
     public function showBusinessHours($page, $empty_message)
     {
