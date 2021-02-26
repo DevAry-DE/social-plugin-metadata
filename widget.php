@@ -18,6 +18,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
     private $option = '';
     private $fb_page;
     private $fb_show_page;
+    private $empty_message;
 
     public function __construct()
     {
@@ -64,7 +65,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
                 <?php endif; ?>
                     <?php 
                     if (!empty($this->option)) {
-                        Ole1986_FacebokPageInfo::get_instance()->{'show' . $this->option}($result);
+                        Ole1986_FacebokPageInfo::get_instance()->{'show' . $this->option}($result, $this->empty_message);
                     } else {
                         echo "<div><small>No option given for ". __('Facebook page info Widget', 'fb-get-pageinfo') ."<small></div>";
                     }
@@ -123,6 +124,10 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
             <label for="<?php echo $this->get_field_id('fb_show_page'); ?>"><?php _e('Show page name:', 'fb-get-pageinfo');?></label>
             <input type="checkbox" id="<?php echo $this->get_field_id('fb_show_page'); ?>" name="<?php echo $this->get_field_name('fb_show_page'); ?>" type="text" <?php echo ($this->fb_show_page ? 'checked' : '') ?> value="1" />
         </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('empty_message'); ?>"><?php _e('Custom message when empty (optional):', 'fb-get-pageinfo');?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id('empty_message'); ?>" name="<?php echo $this->get_field_name('empty_message'); ?>" type="text" value="<?php echo $this->empty_message ?>" />
+        </p>
         <?php
     }
 
@@ -137,5 +142,6 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
         $this->option = isset($instance['option']) ? esc_attr($instance['option']) : "";
         $this->fb_page = isset($instance['fb_page']) ? esc_attr($instance['fb_page']) : "";
         $this->fb_show_page = !empty($instance['fb_show_page']) ?true : false;
+        $this->empty_message = !empty($instance['empty_message']) ? esc_attr($instance['empty_message']) : '';
     }
 }

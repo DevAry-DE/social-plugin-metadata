@@ -120,7 +120,7 @@ class Ole1986_FacebokPageInfo
 
         ob_start();
         
-        $this->{'show' . $option}($result);
+        $this->{'show' . $option}($result, $atts['empty_message']);
         $output_string = ob_get_contents();
 
         ob_end_clean();
@@ -154,11 +154,11 @@ class Ole1986_FacebokPageInfo
      * 
      * @param array $page the page properties received from facebook api
      */
-    public function showBusinessHours($page)
+    public function showBusinessHours($page, $empty_message)
     {
         if (empty($page['hours'])) {
             ?>
-            <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -208,22 +208,22 @@ class Ole1986_FacebokPageInfo
         echo '</div>';
     }
 
-    public function showAbout($page)
+    public function showAbout($page, $empty_message)
     {
         if (empty($page['about'])) {
             ?>
-            <div style="text-align: center"><?php _e('Currently there are no business hours given in Facebook', 'fb-get-pageinfo') ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
             <?php
             return;
         }
         echo '<div class="fb-pageinfo-about">'.$page['about'].'</div>';
     }
 
-    public function showLastPost($page)
+    public function showLastPost($page, $empty_message)
     {
         if (empty($page['data'])) {
             ?>
-            <div style="text-align: center"><?php _e('No Facebook posts found', 'fb-get-pageinfo') ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
             <?php
             return;
         }
