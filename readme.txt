@@ -19,9 +19,9 @@ Currently supported information are
 
 For shortcodes the following names are available
 
-* [fb-pageinfo-businesshours page_id="<page>"]
-* [fb-pageinfo-about page_id="<page>"]
-* [fb-pageinfo-lastpost page_id="<page>"]
+* [fb-pageinfo-businesshours page_id="<page>" empty_message=""]
+* [fb-pageinfo-about page_id="<page>" empty_message=""]
+* [fb-pageinfo-lastpost page_id="<page>" empty_message=""]
 
 == Installation ==
 
