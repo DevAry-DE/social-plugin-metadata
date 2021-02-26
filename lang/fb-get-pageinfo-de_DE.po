@@ -26,9 +26,6 @@ msgstr "Wird verwendet um Facebook Seiteninformationen als Widget oder Shortcode
 msgid "Used to output several information gathered from a facebook page"
 msgstr "Verwendet eine Facebook Seite um verschiedene informationen davon darzustellen"
 
-msgid "Title:"
-msgstr "Titel:"
-
 msgid "Facebook Page:"
 msgstr "Facebook Seite:"
 
@@ -37,27 +34,6 @@ msgstr "Seitenname anzeigen:"
 
 msgid "Business hours"
 msgstr "Geschäftszeiten"
-
-msgid "Monday"
-msgstr "Montag"
-
-msgid "Tuesday"
-msgstr "Dienstag"
-
-msgid "Wednesday"
-msgstr "Mittwoch"
-
-msgid "Thursday"
-msgstr "Donnerstag"
-
-msgid "Friday"
-msgstr "Freitag"
-
-msgid "Saturday"
-msgstr "Samstag"
-
-msgid "Sunday"
-msgstr "Sonntag"
 
 msgid "Opening hours"
 msgstr "Öffnungszeiten"

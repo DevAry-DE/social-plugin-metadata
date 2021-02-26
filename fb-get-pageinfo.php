@@ -20,6 +20,10 @@ require_once 'widget.php';
 class Ole1986_FacebokPageInfo
 {
     /**
+     * Cache expiration in seconds (3 minutes)
+     */
+    static $CACHE_EXPIRATION = 60 * 3;
+    /**
      * The frontend page where the [fb-gateway] shortcode is located (provided by the fb-gateway plugin)
      */
     static $FB_GATEWAY_URL = "https://www.cloud86.de/facebook-gateway/";
@@ -135,6 +139,13 @@ class Ole1986_FacebokPageInfo
             return;
         }
 
+        // cache check
+        $result = get_transient('fp-get-pageinfo-' . $option);
+
+        if ($result !== false) {
+            return $result;
+        }
+
         switch($option) {
         case 'BusinessHours':
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=hours&access_token=' . $currentPage['access_token']);
@@ -145,6 +156,12 @@ class Ole1986_FacebokPageInfo
         case 'LastPost':
             $result = $this->fbGraphRequest($currentPage['id'] . '/posts?fields=message,permalink_url,created_time&limit=1&access_token=' . $currentPage['access_token']);
             break;
+        }
+
+        // only cache when outside test environment
+        if (!$this->isTesting) {
+            // expire in 1 minute
+            set_transient('fp-get-pageinfo-' . $option, $result, self::$CACHE_EXPIRATION);
         }
 
         return $result;
@@ -160,7 +177,7 @@ class Ole1986_FacebokPageInfo
     {
         if (empty($page['hours'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -187,13 +204,13 @@ class Ole1986_FacebokPageInfo
         );
 
         $mapDayNames = [
-            'mon' => __('Monday', 'fb-get-pageinfo'),
-            'tue' => __('Tuesday', 'fb-get-pageinfo'),
-            'wed' => __('Wednesday', 'fb-get-pageinfo'),
-            'thu' => __('Thursday', 'fb-get-pageinfo'),
-            'fri' => __('Friday', 'fb-get-pageinfo'),
-            'sat' => __('Saturday', 'fb-get-pageinfo'),
-            'sun' => __('Sunday', 'fb-get-pageinfo'),
+            'mon' => __('Monday'),
+            'tue' => __('Tuesday'),
+            'wed' => __('Wednesday'),
+            'thu' => __('Thursday'),
+            'fri' => __('Friday'),
+            'sat' => __('Saturday'),
+            'sun' => __('Sunday'),
         ];
 
         echo '<div class="fb-pageinfo-hours">';
@@ -214,7 +231,7 @@ class Ole1986_FacebokPageInfo
     {
         if (empty($page['about'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -225,7 +242,7 @@ class Ole1986_FacebokPageInfo
     {
         if (empty($page['data'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'fb-get-pageinfo') : $empty_message); ?></div>
+            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -239,13 +256,13 @@ class Ole1986_FacebokPageInfo
 
         $diff = $now->diff($created);
         
-        $friendlyDiff = $diff->format(__('%i minutes ago', 'fb-get-pageinfo'));
+        $friendlyDiff = $diff->format(__('%i minutes ago'));
 
         if ($diffSeconds > (60 * 60)) {
-            $friendlyDiff = $diff->format(__('%h hours ago', 'fb-get-pageinfo'));
+            $friendlyDiff = $diff->format(__('%h hours ago'));
         }
         if ($diffSeconds > (60 * 60 * 24)) {
-            $friendlyDiff = $diff->format(__('%d days ago', 'fb-get-pageinfo'));
+            $friendlyDiff = $diff->format(__('%d days ago'));
         }
         if ($diffSeconds > (60 * 60 * 24 * 3)) {
             $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
@@ -256,7 +273,7 @@ class Ole1986_FacebokPageInfo
             <?php echo $lastPost['message'] ?>
             <div class="fb-pageinfo-lastpost-footer">
                 <div class="fb-pageinfo-lastpost-link">
-                    <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook', 'fb-get-pageinfo') ?></a></small>
+                    <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook') ?></a></small>
                 </div>
                 <div class="fb-pageinfo-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
             </div>
@@ -281,12 +298,15 @@ class Ole1986_FacebokPageInfo
 
     public function fb_get_page_options()
     {
-        
         $result = get_option(self::$WP_OPTION_PAGES, []);
 
         if (empty($_POST['pretty'])) {
             header('Content-Type: application/json');   
         }
+
+        array_walk($result, function (&$v) {
+            $v['access_token'] = '(hidden)';
+        });
 
         echo json_encode($result, JSON_PRETTY_PRINT);
         
@@ -331,7 +351,7 @@ class Ole1986_FacebokPageInfo
      */
     public function settings_page()
     {
-        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
+        add_menu_page(__('Facebook page info'), __('Facebook page info'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
     }
     
     /**
@@ -361,7 +381,7 @@ class Ole1986_FacebokPageInfo
                     .done(function(response){
                         if (!response) {
                             alert.addClass('error');
-                            alert.find('p').html('<?php _e('Something went wrong. Please choose at least one facebook page after login', 'fb-get-pageinfo') ?>');    
+                            alert.find('p').html('<?php _e('Something went wrong. Please choose at least one facebook page after login') ?>');    
                             frame.show();
                             return;
                         }
@@ -386,9 +406,9 @@ class Ole1986_FacebokPageInfo
             });
             
         </script>
-        <h2><?php _e('Facebook page info', 'fb-get-pageinfo') ?></h2>
+        <h2><?php _e('Facebook page info') ?></h2>
         <div id="fb-pageinfo-sync" class="notice">
-            <p><?php _e('Please follow the instruction below to syncronize your facebook pages', 'fb-get-pageinfo') ?></p>
+            <p><?php _e('Please follow the instruction below to syncronize your facebook pages') ?></p>
         </div>
         <div style="display: flex;">
             <div id="fb-gateway-frame" style="margin: 1em">
@@ -407,11 +427,11 @@ class Ole1986_FacebokPageInfo
                         <li>Verwenden Sie den Knopf "Login and Sync" um sich mit Ihrem Facebook Konto anzumelden und die Synchronisierung Ihrer Facebook Seiten zu starten.</li>
                         <li>
                             Sie werden aufgefordert die Facebook App "Cloud 86 / Link Page" mit Ihrem Profil zu verbinden.<br />
-                            Mit Ihrer Zustimmmung genehmigen Sie der App ausgewählte Facebook Seiten über das Plugin <strong><?php _e('Facebook page info', 'fb-get-pageinfo') ?></strong> zu verwenden und Metadaten auszugeben.
+                            Mit Ihrer Zustimmmung genehmigen Sie der App ausgewählte Facebook Seiten über das Plugin <strong><?php _e('Facebook page info') ?></strong> zu verwenden und Metadaten auszugeben.
                         </li>
                         <li>
                             Nach der Freigabe und abgeschlossener "Synchronisierung" wechseln Sie bitte zum Abschnitt Design / <a href="widgets.php">Widgets</a>.<br />
-                            Von dort aus können Sie Ihr  <?php _e('Facebook page info Widget', 'fb-get-pageinfo') ?> nach Ihren bedürfnissen anpassen.
+                            Von dort aus können Sie Ihr  <?php _e('Facebook page info Widget') ?> nach Ihren bedürfnissen anpassen.
                         </li>
                         <li>
                             Schieben Sie dazu das Widget in eines der Widget Bereiche, geben die gewünschte Facebook Seite sowie Einstellung an und speichern die Einstellung.<br />
