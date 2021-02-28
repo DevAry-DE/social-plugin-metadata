@@ -17,16 +17,30 @@ Currently supported information are
 * Page about text
 * Last posted entry (incl. text, link and date)
 
-For shortcodes the following names are available
-
-* [fb-pageinfo-businesshours page_id="<page>" empty_message=""]
-* [fb-pageinfo-about page_id="<page>" empty_message=""]
-* [fb-pageinfo-lastpost page_id="<page>" empty_message=""]
+Check out the Installation instruction for further details
 
 == Installation ==
 
 Add it through wordpress or unpack the downloaded zip file into your wp-content/plugins directory
 
+**Quick Guide**
+
+To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages.
+
+1. Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application
+2. Once successfully logged into your facebook account, choose the pages you wish to output metadata for
+3. Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page
+4. To display the content on your front page, move the widget Facebook page info Widget into a desired widget area
+5. Finally save the widget settings and check the output on the front page
+
+**Shortcodes**
+
+If you prefer to use Shortcodes, the below options are available
+
+[fb-pageinfo-businesshours page_id="..." empty_message=""]
+[fb-pageinfo-about page_id="..." empty_message=""]
+[fb-pageinfo-lastpost page_id="..." empty_message=""]
+
 == Changelog ==
 
-not provided
+Changelog can be found at https://github.com/Cloud-86/fb-get-pageinfo/releases
