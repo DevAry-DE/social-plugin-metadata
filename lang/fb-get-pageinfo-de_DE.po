@@ -64,3 +64,27 @@ msgstr "Etwas ist schief gelaufen. Bitte wählen Sie mindestens eine Facebook Se
 
 msgid "Please follow the instruction below to syncronize your facebook pages"
 msgstr "Bitte folgen Sie den nachstehenden Instruktionen um die Facebook Seiten zu synchronisieren"
+
+msgid "Quick Guide"
+msgstr "Kurzanleitung"
+
+msgid "To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages"
+msgstr "Zur Syncronisierung und Ausgabe von Metadaten (Öffnungszeiten, Titel, Beschreibung, Letzte Beiträge) aus Facebook Seiten"
+
+msgid "Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application"
+msgstr "Verwenden Sie den Knopf Login and Sync (Links) um Ihr Facebook Konto mit der App Cloud 86 / Link Page zu verbinden"
+
+msgid "Once successfully logged into your facebook account, choose the pages you wish to output metadata for"
+msgstr "Nach erfolgreicher Facebook Anmeldung wählen Sie die gewünschten Seiten aus für die Sie Metadaten ausgeben möchten"
+
+msgid "Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page"
+msgstr "Ist die Freigabe der Facebook Seiten und die Synchronisierung erfolgreich abgeschlossen, können Sie zum Abschnitt Design -> Widgets wechseln."
+
+msgid "To display the content on your front page, move the widget %s into a desired widget area"
+msgstr "Um den Inhalt des Widgets auf der Frontseite darzustellen, schieben Sie das widget %s in eine Bereich Ihrer Wahl"
+
+msgid "Finally save the widget settings and check the output on the front page"
+msgstr "Abschließend erfolgt das Speichern der gewünschten Widget Einstellung und die Sichtung der Frontseite"
+
+msgid "If you prefer to use %s, the below options are available"
+msgstr "Falls Sie den Einsatz von %s bevorzugen, stehen Ihnen nachfolgende Optionen zur Verfügung"

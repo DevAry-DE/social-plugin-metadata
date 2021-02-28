@@ -351,7 +351,7 @@ class Ole1986_FacebokPageInfo
      */
     public function settings_page()
     {
-        add_menu_page(__('Facebook page info'), __('Facebook page info'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
+        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
     }
     
     /**
@@ -406,7 +406,7 @@ class Ole1986_FacebokPageInfo
             });
             
         </script>
-        <h2><?php _e('Facebook page info') ?></h2>
+        <h2><?php _e('Facebook page info', 'fb-get-pageinfo') ?></h2>
         <div id="fb-pageinfo-sync" class="notice">
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages') ?></p>
         </div>
@@ -420,28 +420,24 @@ class Ole1986_FacebokPageInfo
                 <?php endif; ?>
             </div>
             <div>
-                <h2>Anleitung</h2>
-                <p>Zur Syncronisierung und Ausgabe von Metadaten (Öffnungszeiten, Titel, Beschreibung) aus Facebook Seiten.</p>
+                <h2><?php _e('Quick Guide', 'fb-get-pageinfo') ?></h2>
+                <p><?php _e('To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages', 'fb-get-pageinfo') ?>.</p>
                 <div style="font-family: monospace">
                     <ol>
-                        <li>Verwenden Sie den Knopf "Login and Sync" um sich mit Ihrem Facebook Konto anzumelden und die Synchronisierung Ihrer Facebook Seiten zu starten.</li>
-                        <li>
-                            Sie werden aufgefordert die Facebook App "Cloud 86 / Link Page" mit Ihrem Profil zu verbinden.<br />
-                            Mit Ihrer Zustimmmung genehmigen Sie der App ausgewählte Facebook Seiten über das Plugin <strong><?php _e('Facebook page info') ?></strong> zu verwenden und Metadaten auszugeben.
-                        </li>
-                        <li>
-                            Nach der Freigabe und abgeschlossener "Synchronisierung" wechseln Sie bitte zum Abschnitt Design / <a href="widgets.php">Widgets</a>.<br />
-                            Von dort aus können Sie Ihr  <?php _e('Facebook page info Widget') ?> nach Ihren bedürfnissen anpassen.
-                        </li>
-                        <li>
-                            Schieben Sie dazu das Widget in eines der Widget Bereiche, geben die gewünschte Facebook Seite sowie Einstellung an und speichern die Einstellung.<br />
-                            Anschließend wird das Widget mit den entprechenden Daten auf der Frontseite geladen
-                        </li>
+                        <li><?php _e('Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application', 'fb-get-pageinfo') ?></li>
+                        <li><?php _e('Once successfully logged into your facebook account, choose the pages you wish to output metadata for', 'fb-get-pageinfo') ?></li>
+                        <li><?php _e('Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page', 'fb-get-pageinfo') ?></li>
+                        <li><?php printf(__('To display the content on your front page, move the widget %s into a desired widget area', 'fb-get-pageinfo'), __('Facebook page info Widget', 'fb-get-pageinfo')) ?></li>
+                        <li><?php _e('Finally save the widget settings and check the output on the front page', 'fb-get-pageinfo') ?></li>
                     </ol>
-                    <div>HINWEIS</div>
+                    <h4>Shortcodes</h4>
                     <div>
-                        Abhängig von dem Inhalt der ausgewählte Facebook Seite kann die Ausgabe sich unterscheiden (oder leer sein).<br />
-                        Vergewissern Sie sich, das die ausgewählte Facebook Seite Ihre angeforderten Metadaten (z.B. Öffnungszeiten) enthält.
+                        <?php printf(__('If you prefer to use %s, the below options are available', 'fb-get-pageinfo'), '<a href="https://wordpress.com/de/support/wordpress-editor/bloecke/shortcode-block/" target="_blank">Shortcodes</a>') ?>
+                        <ul>
+                            <li>[fb-pageinfo-businesshours page_id="..." empty_message=""]</li>
+                            <li>[fb-pageinfo-about page_id="..." empty_message=""]</li>
+                            <li>[fb-pageinfo-lastpost page_id="..." empty_message=""]</li>
+                        </ul>
                     </div>
                 </div>
                 <h2>Rechtliche Hinweise</h2>
