@@ -14,11 +14,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: fb-get-pageinfo.php\n"
 
-msgid "Facebook page info Widget"
-msgstr "Facebook Seiteninfo Widget"
+msgid "Social plugin - FB Metadata Widget"
+msgstr "Social plugin - FB Metadaten Widget"
 
-msgid "Facebook page info"
-msgstr "Facebook Seiteninfo"
+msgid "Social Plugin - FB Metadata"
+msgstr "Social Plugin - FB Metadaten"
 
 msgid "Used to display facebook related page information as widget or shortcode (Business hours, About Us, Last Post)"
 msgstr "Wird verwendet um Facebook Seiteninformationen als Widget oder Shortcode anzuzeigen (Z.b. Öffnungszeiten, Über uns, Letzter Beitrag)"

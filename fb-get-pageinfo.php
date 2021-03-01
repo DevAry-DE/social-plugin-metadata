@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Facebook page info
- * Description: Used to display facebook related page information as widget or shortcode (Business hours, About Us, Last Post)
+ * Plugin Name: Social Plugin - FB Metadata
+ * Description: Used to display facebook related page meta information as widget or shortcode (Business hours, About Us, Last Post)
  * Version:     1.0.0
  * Author:      ole1986
  * License: MIT
@@ -351,7 +351,7 @@ class Ole1986_FacebokPageInfo
      */
     public function settings_page()
     {
-        add_menu_page(__('Facebook page info', 'fb-get-pageinfo'), __('Facebook page info', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
+        add_menu_page(__('Social Plugin - FB Metadata', 'fb-get-pageinfo'), __('Social Plugin - FB Metadata', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
     }
     
     /**
@@ -406,7 +406,7 @@ class Ole1986_FacebokPageInfo
             });
             
         </script>
-        <h2><?php _e('Facebook page info', 'fb-get-pageinfo') ?></h2>
+        <h2><?php _e('Social Plugin - FB Metadata', 'fb-get-pageinfo') ?></h2>
         <div id="fb-pageinfo-sync" class="notice">
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages') ?></p>
         </div>
@@ -427,7 +427,7 @@ class Ole1986_FacebokPageInfo
                         <li><?php _e('Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application', 'fb-get-pageinfo') ?></li>
                         <li><?php _e('Once successfully logged into your facebook account, choose the pages you wish to output metadata for', 'fb-get-pageinfo') ?></li>
                         <li><?php _e('Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page', 'fb-get-pageinfo') ?></li>
-                        <li><?php printf(__('To display the content on your front page, move the widget %s into a desired widget area', 'fb-get-pageinfo'), __('Facebook page info Widget', 'fb-get-pageinfo')) ?></li>
+                        <li><?php printf(__('To display the content on your front page, move the widget %s into a desired widget area', 'fb-get-pageinfo'), __('Social plugin - FB Metadata Widget', 'fb-get-pageinfo')) ?></li>
                         <li><?php _e('Finally save the widget settings and check the output on the front page', 'fb-get-pageinfo') ?></li>
                     </ol>
                     <h4>Shortcodes</h4>
