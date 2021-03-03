@@ -22,7 +22,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
 
     public function __construct()
     {
-        parent::__construct('fb-get-pageinfo', __('Social plugin - FB Metadata Widget', 'fb-get-pageinfo'), ['description' => __('Used to output several information gathered from a facebook page', 'fb-get-pageinfo')]);
+        parent::__construct('fb-get-pageinfo', __('Social plugin - Metadata Widget', 'fb-get-pageinfo'), ['description' => __('Used to output several information gathered from a facebook page', 'fb-get-pageinfo')]);
     }
 
     /**

@@ -14,17 +14,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: fb-get-pageinfo.php\n"
 
-msgid "Social plugin - FB Metadata Widget"
-msgstr "Social plugin - FB Metadaten Widget"
+msgid "Social plugin - Metadata Widget"
+msgstr "Social plugin - Meta Daten Widget"
 
-msgid "Social Plugin - FB Metadata"
-msgstr "Social Plugin - FB Metadaten"
+msgid "Social Plugin - Metadata"
+msgstr "Social Plugin - Meta Daten"
 
-msgid "Used to display facebook related page information as widget or shortcode (Business hours, About Us, Last Post)"
+msgid "Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)"
 msgstr "Wird verwendet um Facebook Seiteninformationen als Widget oder Shortcode anzuzeigen (Z.b. Öffnungszeiten, Über uns, Letzter Beitrag)"
 
 msgid "Used to output several information gathered from a facebook page"
 msgstr "Verwendet eine Facebook Seite um verschiedene informationen davon darzustellen"
+
+msgid "Please use the below Login & Sync button to synchronize the facebook pages"
+msgstr "Bitte verwende den unten dargestellten Knopf um mit der Synchronisierung deiner Facebook Seiten zu beginnen"
 
 msgid "Facebook Page:"
 msgstr "Facebook Seite:"
@@ -64,6 +67,9 @@ msgstr "Etwas ist schief gelaufen. Bitte wählen Sie mindestens eine Facebook Se
 
 msgid "Please follow the instruction below to syncronize your facebook pages"
 msgstr "Bitte folgen Sie den nachstehenden Instruktionen um die Facebook Seiten zu synchronisieren"
+
+msgid "Connect with Facebook"
+msgstr "Mit Facebook verbinden"
 
 msgid "Quick Guide"
 msgstr "Kurzanleitung"
