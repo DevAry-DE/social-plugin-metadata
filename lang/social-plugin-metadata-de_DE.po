@@ -71,14 +71,17 @@ msgstr "Bitte folgen Sie den nachstehenden Instruktionen um die Facebook Seiten 
 msgid "Connect with Facebook"
 msgstr "Mit Facebook verbinden"
 
+msgid "Setup your Facebook App (optional)"
+msgstr "Konfiguriere deine Facebook App (optional)"
+
 msgid "Quick Guide"
 msgstr "Kurzanleitung"
 
 msgid "To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages"
 msgstr "Zur Syncronisierung und Ausgabe von Metadaten (Öffnungszeiten, Titel, Beschreibung, Letzte Beiträge) aus Facebook Seiten"
 
-msgid "Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application"
-msgstr "Verwenden Sie den Knopf Login and Sync (Links) um Ihr Facebook Konto mit der App Cloud 86 / Link Page zu verbinden"
+msgid "Use the button Login and Sync (left side) to connect your facebook account with the Facebook App"
+msgstr "Verwenden Sie den Knopf Login and Sync (Links) um Ihr Facebook Konto mit der facebook App zu verbinden"
 
 msgid "Once successfully logged into your facebook account, choose the pages you wish to output metadata for"
 msgstr "Nach erfolgreicher Facebook Anmeldung wählen Sie die gewünschten Seiten aus für die Sie Metadaten ausgeben möchten"
@@ -94,3 +97,9 @@ msgstr "Abschließend erfolgt das Speichern der gewünschten Widget Einstellung 
 
 msgid "If you prefer to use %s, the below options are available"
 msgstr "Falls Sie den Einsatz von %s bevorzugen, stehen Ihnen nachfolgende Optionen zur Verfügung"
+
+msgid "Leave the information empty to use our Facebook App ""Cloud 86 / Link Page"""
+msgstr "Lassen Sie die informationen leer um unsere Facebook App ""Cloud 86 / Link Page"" zu verwenden"
+
+msgid "Build your own %s or use our service gateway"
+msgstr "Erstelle Sie Ihre eigene %s oder verwenden Sie unseren externen Dienst"

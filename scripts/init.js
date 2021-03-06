@@ -21,9 +21,8 @@ function SocialPlugin() {
 
         var appId = jQuery('#fbAppId').val();
         var appSecret = jQuery('#fbAppSecret').val();
-        var appGateway = jQuery('#fbAppGateway').val();
 
-        jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_appdata', appId, appSecret, appGateway})
+        jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_appdata', appId, appSecret})
         .done(function(response) {
             document.location.reload();
         }).catch(function(e) {
@@ -32,7 +31,7 @@ function SocialPlugin() {
     }
 
     this.fbSavePages = function(data) {
-        AlertMessage('', 'Syncing...');
+        AlertMessage('', 'Saving data received from ' + (social_plugin.use_gateway ? 'remote' : 'local') + ' gateway ...');
     
         jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_pages', data })
             .done(function(response){
@@ -57,7 +56,7 @@ function SocialPlugin() {
                     self.fbSavePages(response.data);
                 }).catch(function(e) {
                     var url = new URL(social_plugin.gatewayurl);
-                    AlertMessage('error', 'Something went wrong contacting ' + url.hostname + '. Please try again later...');
+                    AlertMessage('error', 'Something went wrong contacting ' + url.hostname + ': ' + e.responseJSON.error.message);
                 });
             }
             console.log(response);
@@ -90,10 +89,6 @@ function SocialPlugin() {
 
         if (!social_plugin.app_id) {
             AlertMessage('error', 'Please setup the Facebook App ID first');
-        }
-
-        if (!social_plugin.gatewayurl) {
-            AlertMessage('error', 'Please consider to configure either a gateway url (remote) or facebook secret (standalone)');
         }
     })();
 }

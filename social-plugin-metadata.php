@@ -7,7 +7,7 @@
  * License: MIT
  * Requires at least: 5.0
  * Requires PHP: 7.0
- * Text Domain: fb-get-pageinfo
+ * Text Domain: social-plugin-metadata
  * 
  * @author  Ole Köckemann <ole.koeckemann@gmail.com>
  * @license MIT
@@ -15,15 +15,15 @@
 
 defined('ABSPATH') or die('No script kiddies please!');
 
-if (file_exists(__DIR__ . '/../fb-gateway/gateway/interfaces/IFacebookGatewayHost.php')) {
-    include_once __DIR__ . '/../fb-gateway/gateway/interfaces/IFacebookGatewayHost.php';
+if (file_exists(__DIR__ . '/../social-plugin-gateway/gateway/interfaces/IFacebookGatewayHost.php')) {
+    include_once __DIR__ . '/../social-plugin-gateway/gateway/interfaces/IFacebookGatewayHost.php';
 } else {
     include_once 'gateway/interfaces/IFacebookGateway.php';
 }
 
-if (file_exists(__DIR__ . '/../fb-gateway/gateway/gateway.php')) {
+if (file_exists(__DIR__ . '/../social-plugin-gateway/gateway/gateway.php')) {
     // unusually the plugin is installed (for testing). So use its resources
-    include_once __DIR__ . '/../fb-gateway/gateway/gateway.php';
+    include_once __DIR__ . '/../social-plugin-gateway/gateway/gateway.php';
 } else {
     // otherwise asume its standalone, so load it from current plugin
     include_once 'gateway/gateway.php';
@@ -38,6 +38,9 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     static $CACHE_EXPIRATION = 60 * 3;
 
+    static $DEFAULT_APP_ID = "475478070525107";
+    static $SP_GATEWAY_URL = "https://www.cloud86.de/wp-admin/admin-ajax.php";
+
     /**
      * The wordpress option where the facebook pages (long lived page token) are bing stored
      */
@@ -45,8 +48,6 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     static $WP_OPTION_APPID = 'fb_get_app_id';
     static $WP_OPTION_APPSECRET = 'fb_get_app_secret';
-
-    static $WP_OPTION_APPGATEWAY = 'fb_get_gateway_url';
 
      /**
       * The unique instance of the plugin.
@@ -70,14 +71,13 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     }
 
     private $isTesting = false;
-    private $gatewayUrl;
 
     /**
      * constructor overload of the WP_Widget class to initialize the media widget
      */
     public function __construct()
     {
-        load_plugin_textdomain('fb-get-pageinfo', false, dirname(plugin_basename(__FILE__)) . '/lang/');
+        load_plugin_textdomain('social-plugin-metadata', false, dirname(plugin_basename(__FILE__)) . '/lang/');
 
         // check if currently is setup for testing
         $this->checkTesting();
@@ -106,7 +106,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function getAppID()
     {
-        return get_option(self::$WP_OPTION_APPID, '');
+        return get_option(self::$WP_OPTION_APPID, self::$DEFAULT_APP_ID);
     }
 
     public function getAppSecret()
@@ -114,14 +114,19 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         return get_option(self::$WP_OPTION_APPSECRET, '');
     }
 
-    public function getAppGateway()
+    public function useGateway()
     {
-        return get_option(self::$WP_OPTION_APPGATEWAY, '');
+        return empty($this->getAppSecret) ? 1 : 0;
     }
 
     private function checkTesting()
     {
         $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
+
+        if (in_array('social-plugin-gateway/social-plugin-gateway.php', (array)get_option('active_plugins', []))) {
+            // social plugin gateway is available, so prefer to use current host as gatway url
+            self::$SP_GATEWAY_URL = admin_url('admin-ajax.php');
+        }
     }
 
     private function registerShortcodes()
@@ -362,9 +367,17 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function fb_save_appdata()
     {
-        update_option(self::$WP_OPTION_APPID, esc_attr($_POST['appId']));
-        update_option(self::$WP_OPTION_APPSECRET, esc_attr($_POST['appSecret']));
-        update_option(self::$WP_OPTION_APPGATEWAY, esc_attr($_POST['appGateway']));
+        if (empty($_POST['appId'])) {
+            delete_option(self::$WP_OPTION_APPID);
+        } else {
+            update_option(self::$WP_OPTION_APPID, esc_attr($_POST['appId']));
+        }
+        
+        if (empty($_POST['appSecret'])) {
+            delete_option(self::$WP_OPTION_APPSECRET);    
+        } else {
+            update_option(self::$WP_OPTION_APPSECRET, esc_attr($_POST['appSecret']));    
+        }
 
         header('Content-Type: application/json');
         echo json_encode(true);
@@ -396,7 +409,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function load_scripts($hook)
     {
-        if (strpos($hook, 'fb-get-pageinfo-plugin') === false) {
+        if (strpos($hook, 'social-plugin-metadata-plugin') === false) {
             return;
         }
 
@@ -404,7 +417,8 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         wp_localize_script('social_plugin', 'social_plugin', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'gatewayurl' => empty($this->getAppSecret()) ? $this->getAppGateway() : admin_url('admin-ajax.php'),
+            'gatewayurl' => empty($this->getAppSecret()) ? self::$SP_GATEWAY_URL : admin_url('admin-ajax.php'),
+            "use_gateway" => $this->useGateway(),
             'app_id' => $this->getAppID()
         ]);
     }
@@ -414,7 +428,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function settings_page()
     {
-        add_menu_page(__('Social Plugin - Metadata', 'fb-get-pageinfo'), __('Social Plugin - Metadata', 'fb-get-pageinfo'), 'edit_posts', 'fb-get-pageinfo-plugin', [$this, 'settings_page_content'], '', 4);
+        add_menu_page(__('Social Plugin - Metadata', 'social-plugin-metadata'), __('Social Plugin - Metadata', 'social-plugin-metadata'), 'edit_posts', 'social-plugin-metadata-plugin', [$this, 'settings_page_content'], '', 4);
     }
     
     /**
@@ -424,32 +438,34 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         $pages = get_option(self::$WP_OPTION_PAGES, []);
         ?>
-        <h2><?php _e('Social Plugin - Metadata', 'fb-get-pageinfo') ?></h2>
+        <h2><?php _e('Social Plugin - Metadata', 'social-plugin-metadata') ?></h2>
         <div id="fb-pageinfo-alert" class="notice">
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages') ?></p>
         </div>
         <div style="display: flex;">
             <div id="fb-gateway-frame" style="margin: 1em">
-                <h3><?php _e('Connect with Facebook', 'fb-get-pageinfo') ?></h3>
+                <h3><?php _e('Connect with Facebook', 'social-plugin-metadata') ?></h3>
                 <div id="fb-gateway-container">
                     <p>
-                        <?php _e('Please use the below Login & Sync button to synchronize the facebook pages', 'fb-get-pageinfo') ?>
+                        <?php _e('Please use the below Login & Sync button to synchronize the facebook pages', 'social-plugin-metadata') ?>
                     </p>
                     <button id="fb-gateway-login" class="button hide-if-no-js">Login and Sync</button>
                 </div>
                 <div style="margin-top: 1em">  
-                    <h3><?php _e('Setup Facebook App', 'fb-get-pageinfo') ?></h3>
+                    <h3><?php _e('Setup your Facebook App (optional)', 'social-plugin-metadata') ?></h3>
+                    <p><?php printf(__('Build your own %s or use our service gateway', 'social-plugin-metadata'), '<a href="https://developers.facebook.com/apps/" target="_blank">Facebook App</a>') ?></p>
                     <div>
-                        <label>Facebook App ID</label><br />
-                        <input class="widefat" type="text"  autocomplete="off" id="fbAppId" value="<?php echo $this->getAppID() ?>" />
+                        <label>Facebook App ID (standalone / optional)</label><br />
+                        <input class="widefat" type="text"  autocomplete="off" id="fbAppId" value="<?php echo get_option(self::$WP_OPTION_APPID, '') ?>" />
                     </div>
                     <div style="margin-top: 0.5em">
                         <label>Facebook App Secret (standalone / optional)</label><br />
                         <input class="widefat" type="password" autocomplete="new-password" id="fbAppSecret" />
                     </div>
                     <div style="margin-top: 0.5em">
-                        <label>- or Gateway URL (remote)</label><br />
-                        <input class="widefat" type="text" autocomplete="off" id="fbAppGateway" value="<?php echo $this->getAppGateway() ?>" />
+                        <strong>
+                            <?php _e('Leave the information empty to use our Facebook App "Cloud 86 / Link Page"', 'social-plugin-metadata') ?>
+                        </strong>
                     </div>
                     <div style="margin-top: 1em">
                         <button id="fb-appdata-save" class="button hide-if-no-js">Save</button>
@@ -457,19 +473,26 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                 </div>
             </div>
             <div style="margin: 1em">
-                <h3><?php _e('Quick Guide', 'fb-get-pageinfo') ?></h3>
-                <p><?php _e('To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages', 'fb-get-pageinfo') ?>.</p>
+                <h3><?php _e('Quick Guide', 'social-plugin-metadata') ?></h3>
+                <p><?php _e('To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages', 'social-plugin-metadata') ?>.</p>
                 <div style="font-family: monospace">
                     <ol>
-                        <li><?php _e('Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application', 'fb-get-pageinfo') ?></li>
-                        <li><?php _e('Once successfully logged into your facebook account, choose the pages you wish to output metadata for', 'fb-get-pageinfo') ?></li>
-                        <li><?php _e('Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page', 'fb-get-pageinfo') ?></li>
-                        <li><?php printf(__('To display the content on your front page, move the widget %s into a desired widget area', 'fb-get-pageinfo'), __('Social plugin - Metadata Widget', 'fb-get-pageinfo')) ?></li>
-                        <li><?php _e('Finally save the widget settings and check the output on the front page', 'fb-get-pageinfo') ?></li>
+                        <li>
+                            <?php _e('Use the button Login and Sync (left side) to connect your facebook account with the Facebook App', 'social-plugin-metadata') ?><br />
+                            <strong>Dependent on the choice given in the "Setup Facebook App" you may get asked to connect your Facebook Account with</strong>
+                            <ul style="list-style: inside">
+                                <li>your own Facebook app</li>
+                                <li>or our Facebook App "Cloud 86 / Link Page"</li>
+                            </ul>
+                        </li>
+                        <li><?php _e('Once successfully logged into your facebook account, choose the pages you wish to output metadata for', 'social-plugin-metadata') ?></li>
+                        <li><?php _e('Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page', 'social-plugin-metadata') ?></li>
+                        <li><?php printf(__('To display the content on your front page, move the widget %s into a desired widget area', 'social-plugin-metadata'), __('Social plugin - Metadata Widget', 'social-plugin-metadata')) ?></li>
+                        <li><?php _e('Finally save the widget settings and check the output on the front page', 'social-plugin-metadata') ?></li>
                     </ol>
                     <h4>Shortcodes</h4>
                     <div>
-                        <?php printf(__('If you prefer to use %s, the below options are available', 'fb-get-pageinfo'), '<a href="https://wordpress.com/de/support/wordpress-editor/bloecke/shortcode-block/" target="_blank">Shortcodes</a>') ?>
+                        <?php printf(__('If you prefer to use %s, the below options are available', 'social-plugin-metadata'), '<a href="https://wordpress.com/de/support/wordpress-editor/bloecke/shortcode-block/" target="_blank">Shortcodes</a>') ?>
                         <ul>
                             <li>[fb-pageinfo-businesshours page_id="..." empty_message=""]</li>
                             <li>[fb-pageinfo-about page_id="..." empty_message=""]</li>
