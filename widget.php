@@ -52,16 +52,10 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
         echo $args['before_widget'];
         echo $args['before_title'] . $this->title . $args['after_title'];
         ?>
-
-        <style>
-            .fb-pageinfo-hours { display: flex; flex-direction: column; }
-            .fb-pageinfo-days { display: flex; justify-content: space-between; }
-            .fb-pageinfo-lastpost-footer {display: flex; justify-content: space-between; }
-        </style>
         <div id="fb-pageinfo-widget">
             <?php if (empty($result['error'])) : ?>
                 <?php if ($this->fb_show_page) : ?>
-                    <h4 class="fb-pageinfo-title"><?php echo $currentPage['name']; ?></h4>
+                    <h4 class="social-plugin-metadata-title"><?php echo $currentPage['name']; ?></h4>
                 <?php endif; ?>
                     <?php 
                     if (!empty($this->option)) {

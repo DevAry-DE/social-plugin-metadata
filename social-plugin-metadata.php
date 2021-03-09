@@ -49,11 +49,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     static $WP_OPTION_APPID = 'fb_get_app_id';
     static $WP_OPTION_APPSECRET = 'fb_get_app_secret';
 
-     /**
-      * The unique instance of the plugin.
-      *
-      * @var Ole1986_FacebokPageInfo
-      */
+    /**
+     * The unique instance of the plugin.
+     *
+     * @var Ole1986_FacebokPageInfo
+     */
     private static $instance;
 
     /**
@@ -82,6 +82,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         // check if currently is setup for testing
         $this->checkTesting();
 
+        // load scripts and styles for frontend
+        add_action('wp_enqueue_scripts', [$this, 'load_frontend_scripts']);
+        // load scripts and styles for backend
+        add_action('admin_enqueue_scripts', [$this, 'load_scripts']);
+
         add_action('widgets_init', function () {
             register_widget('Ole1986_FacebokPageInfoWidget');
         });
@@ -98,10 +103,28 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             new Ole1986_FacebookGateway($this);
         }
 
-        add_action('admin_enqueue_scripts', [$this, 'load_scripts']);
-
         $this->registerShortcodes();
+    }
 
+    public function load_frontend_scripts()
+    {
+        wp_enqueue_style('social_plugin_style', plugins_url('styles/style.css', __FILE__));
+    }
+
+    public function load_scripts($hook)
+    {
+        if (strpos($hook, 'social-plugin-metadata-plugin') === false) {
+            return;
+        }
+
+        wp_enqueue_script('social_plugin', plugins_url('scripts/init.js', __FILE__));
+
+        wp_localize_script('social_plugin', 'social_plugin', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'gatewayurl' => empty($this->getAppSecret()) ? self::$SP_GATEWAY_URL : admin_url('admin-ajax.php'),
+            "use_gateway" => $this->useGateway(),
+            'app_id' => $this->getAppID()
+        ]);
     }
 
     public function getAppID()
@@ -218,7 +241,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['hours'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -254,11 +277,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             'sun' => __('Sunday'),
         ];
 
-        echo '<div class="fb-pageinfo-hours">';
+        echo '<div class="social-plugin-metadata-hours">';
         foreach ($result as $k => $v) {
-            echo '<div class="fb-pageinfo-days">';
+            echo '<div class="social-plugin-metadata-days">';
             echo "<div>" . $mapDayNames[$k] . "</div>";
-            echo "<div class='fb-pageinfo-hours-times'>";
+            echo '<div class="social-plugin-metadata-hours-times">';
             foreach ($v as $value) {
                 echo "<div>".$value['open']." - ".$value['close']."</div>";
             }
@@ -272,18 +295,18 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['about'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
-        echo '<div class="fb-pageinfo-about">'.$page['about'].'</div>';
+        echo '<div class="social-plugin-metadata-about">'.$page['about'].'</div>';
     }
 
     public function showLastPost($page, $empty_message)
     {
         if (empty($page['data'])) {
             ?>
-            <div class="fb-pageinfo-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -310,13 +333,13 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         }
 
         ?>
-        <div class="fb-pageinfo-lastpost">
+        <div class="social-plugin-metadata-lastpost">
             <?php echo $lastPost['message'] ?>
-            <div class="fb-pageinfo-lastpost-footer">
-                <div class="fb-pageinfo-lastpost-link">
+            <div class="social-plugin-metadata-lastpost-footer">
+                <div class="social-plugin-metadata-lastpost-link">
                     <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook') ?></a></small>
                 </div>
-                <div class="fb-pageinfo-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
+                <div class="social-plugin-metadata-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
             </div>
         </div>
         <?php
@@ -405,22 +428,6 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         }
 
         return true;
-    }
-
-    public function load_scripts($hook)
-    {
-        if (strpos($hook, 'social-plugin-metadata-plugin') === false) {
-            return;
-        }
-
-        wp_enqueue_script('social_plugin', plugins_url('scripts/init.js', __FILE__));
-
-        wp_localize_script('social_plugin', 'social_plugin', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'gatewayurl' => empty($this->getAppSecret()) ? self::$SP_GATEWAY_URL : admin_url('admin-ajax.php'),
-            "use_gateway" => $this->useGateway(),
-            'app_id' => $this->getAppID()
-        ]);
     }
 
     /**

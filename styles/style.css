@@ -1,0 +1,11 @@
+.social-plugin-metadata-hours {
+    display: flex; flex-direction: column;
+}
+.social-plugin-metadata-days {
+    display: flex;
+    justify-content: space-between;
+}
+.social-plugin-metadata-lastpost-footer {
+    display: flex;
+    justify-content: space-between;
+}
