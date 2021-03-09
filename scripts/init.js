@@ -63,6 +63,11 @@ function SocialPlugin() {
         },  {scope: 'public_profile,pages_show_list'});
     };
 
+    this.showCustomAppOptions = function() {
+        jQuery('#fb-gateway-custom').show();
+        jQuery('#fb-gateway-our').hide();
+    }
+
     var loadFB = function() {
         window.fbAsyncInit = function() {
             FB.init({
@@ -87,8 +92,16 @@ function SocialPlugin() {
         jQuery('#fb-gateway-login').click(self.fbLogin);
         jQuery('#fb-appdata-save').click(self.fbSaveAppdata);
 
-        if (!social_plugin.app_id) {
-            AlertMessage('error', 'Please setup the Facebook App ID first');
+        jQuery('#fb-gateway-change').click(self.showCustomAppOptions);
+
+
+        var fbAppId = jQuery('#fbAppId').val();
+
+        if (!fbAppId) {
+            jQuery('#fb-gateway-custom').hide();
+        } else {
+            jQuery('#fb-gateway-custom').show();
+            jQuery('#fb-gateway-our').hide();
         }
     })();
 }

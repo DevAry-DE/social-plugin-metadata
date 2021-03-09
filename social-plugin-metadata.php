@@ -241,7 +241,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['hours'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $empty_message); ?></div>
             <?php
             return;
         }
@@ -295,7 +295,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['about'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ?__('Currently there are no entries given in Facebook', 'social-plugin-metadata')  : $empty_message); ?></div>
             <?php
             return;
         }
@@ -306,7 +306,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['data'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata')  : $empty_message); ?></div>
             <?php
             return;
         }
@@ -460,22 +460,25 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                 </div>
                 <div style="margin-top: 1em">  
                     <h3><?php _e('Setup your Facebook App (optional)', 'social-plugin-metadata') ?></h3>
-                    <p><?php printf(__('Build your own %s or use our service gateway', 'social-plugin-metadata'), '<a href="https://developers.facebook.com/apps/" target="_blank">Facebook App</a>') ?></p>
-                    <div>
-                        <label>Facebook App ID (standalone / optional)</label><br />
-                        <input class="widefat" type="text"  autocomplete="off" id="fbAppId" value="<?php echo get_option(self::$WP_OPTION_APPID, '') ?>" />
+                    <div id="fb-gateway-custom" hidden>
+                        <p><?php printf(__('Build your own %s or use our service gateway', 'social-plugin-metadata'), '<a href="https://developers.facebook.com/apps/" target="_blank">Facebook App</a>') ?></p>
+                        <div>
+                            <label>Facebook App ID (standalone / optional)</label><br />
+                            <input class="widefat" type="text"  autocomplete="off" id="fbAppId" value="<?php echo get_option(self::$WP_OPTION_APPID, '') ?>" />
+                        </div>
+                        <div style="margin-top: 0.5em">
+                            <label>Facebook App Secret (standalone / optional)</label><br />
+                            <input class="widefat" type="password" autocomplete="new-password" id="fbAppSecret" />
+                        </div>
+                        <div style="margin-top: 1em">
+                            <button id="fb-appdata-save" class="button hide-if-no-js">Save</button>
+                        </div>
                     </div>
-                    <div style="margin-top: 0.5em">
-                        <label>Facebook App Secret (standalone / optional)</label><br />
-                        <input class="widefat" type="password" autocomplete="new-password" id="fbAppSecret" />
-                    </div>
-                    <div style="margin-top: 0.5em">
-                        <strong>
-                            <?php _e('Leave the information empty to use our Facebook App "Cloud 86 / Link Page"', 'social-plugin-metadata') ?>
-                        </strong>
-                    </div>
-                    <div style="margin-top: 1em">
-                        <button id="fb-appdata-save" class="button hide-if-no-js">Save</button>
+                    <div id="fb-gateway-our">
+                        <div><?php _e('Currently you are using our Facebook App to gather necessary page information', 'social-plugin-metadata') ?></div>
+                        <div style="margin-top: 1em">
+                            <button id="fb-gateway-change" class="button hide-if-no-js"><?php _e('Use my Facebook App', 'social-plugin-metadata') ?></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -486,10 +489,10 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                     <ol>
                         <li>
                             <?php _e('Use the button Login and Sync (left side) to connect your facebook account with the Facebook App', 'social-plugin-metadata') ?><br />
-                            <strong>Dependent on the choice given in the "Setup Facebook App" you may get asked to connect your Facebook Account with</strong>
+                            <strong><?php printf(__("Dependent on details given in the '%s' you get asked to connect your Facebook Account with the following app", 'social-plugin-metadata'), __('Setup your Facebook App (optional)', 'social-plugin-metadata')) ?></strong>
                             <ul style="list-style: inside">
+                                <li>our Facebook App "Cloud 86 / Link Page"</li>
                                 <li>your own Facebook app</li>
-                                <li>or our Facebook App "Cloud 86 / Link Page"</li>
                             </ul>
                         </li>
                         <li><?php _e('Once successfully logged into your facebook account, choose the pages you wish to output metadata for', 'social-plugin-metadata') ?></li>

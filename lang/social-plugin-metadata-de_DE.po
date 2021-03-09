@@ -98,8 +98,14 @@ msgstr "Abschließend erfolgt das Speichern der gewünschten Widget Einstellung 
 msgid "If you prefer to use %s, the below options are available"
 msgstr "Falls Sie den Einsatz von %s bevorzugen, stehen Ihnen nachfolgende Optionen zur Verfügung"
 
-msgid "Leave the information empty to use our Facebook App ""Cloud 86 / Link Page"""
-msgstr "Lassen Sie die informationen leer um unsere Facebook App ""Cloud 86 / Link Page"" zu verwenden"
+msgid "Currently you are using our Facebook App to gather necessary page information"
+msgstr "Aktuell verwenden Sie unsere Facebook App um Seiteninformationen zu laden"
+
+msgid "Use my Facebook App"
+msgstr "Verwende meine Facebook App"
 
 msgid "Build your own %s or use our service gateway"
 msgstr "Erstelle Sie Ihre eigene %s oder verwenden Sie unseren externen Dienst"
+
+msgid "Dependent on details given in the '%s' you get asked to connect your Facebook Account with the following app"
+msgstr "Abhängig von den Angaben in '%s' werden Sie aufgefordert Ihr Facebook Konto mit nachstehender app zu verbinden"
