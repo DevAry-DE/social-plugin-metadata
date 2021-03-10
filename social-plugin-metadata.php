@@ -15,20 +15,8 @@
 
 defined('ABSPATH') or die('No script kiddies please!');
 
-if (file_exists(__DIR__ . '/../social-plugin-gateway/gateway/interfaces/IFacebookGatewayHost.php')) {
-    include_once __DIR__ . '/../social-plugin-gateway/gateway/interfaces/IFacebookGatewayHost.php';
-} else {
-    include_once 'gateway/interfaces/IFacebookGateway.php';
-}
-
-if (file_exists(__DIR__ . '/../social-plugin-gateway/gateway/gateway.php')) {
-    // unusually the plugin is installed (for testing). So use its resources
-    include_once __DIR__ . '/../social-plugin-gateway/gateway/gateway.php';
-} else {
-    // otherwise asume its standalone, so load it from current plugin
-    include_once 'gateway/gateway.php';
-}
-
+require_once 'gateway/interfaces/IFacebookGatewayHost.php';
+require_once 'gateway/gateway.php';
 require_once 'widget.php';
 
 class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
@@ -44,10 +32,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     /**
      * The wordpress option where the facebook pages (long lived page token) are bing stored
      */
-    static $WP_OPTION_PAGES = 'fb_get_page_info';
+    static $WP_OPTION_PAGES = 'social_plugin_fb_pages';
 
-    static $WP_OPTION_APPID = 'fb_get_app_id';
-    static $WP_OPTION_APPSECRET = 'fb_get_app_secret';
+    static $WP_OPTION_APPID = 'social_plugin_fb_app_id';
+    static $WP_OPTION_APPSECRET = 'social_plugin_fb_app_secret';
+    static $WP_OPTION_ISPUBLIC = 'social_plugin_api_public';
 
     /**
      * The unique instance of the plugin.
@@ -100,7 +89,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         // initialize the facebook for private use
         if (!empty($this->getAppSecret())) {
-            new Ole1986_FacebookGateway($this);
+            new Ole1986_FacebookGateway($this, $this->isPublic());
         }
 
         $this->registerShortcodes();
@@ -140,6 +129,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     public function useGateway()
     {
         return empty($this->getAppSecret) ? 1 : 0;
+    }
+
+    public function isPublic()
+    {
+        return get_option(self::$WP_OPTION_ISPUBLIC, 0);
     }
 
     private function checkTesting()
@@ -402,6 +396,12 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             update_option(self::$WP_OPTION_APPSECRET, esc_attr($_POST['appSecret']));    
         }
 
+        if (empty($_POST['isPublic'])) {
+            delete_option(self::$WP_OPTION_ISPUBLIC);
+        } else {
+            update_option(self::$WP_OPTION_ISPUBLIC, 1);
+        }
+
         header('Content-Type: application/json');
         echo json_encode(true);
 
@@ -469,6 +469,9 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                         <div style="margin-top: 0.5em">
                             <label>Facebook App Secret (standalone / optional)</label><br />
                             <input class="widefat" type="password" autocomplete="new-password" id="fbAppSecret" />
+                        </div>
+                        <div style="margin-top: 0.5em">
+                            <label><input type="checkbox" id="fbIsPublic"  <?php echo $this->isPublic() ? 'checked' : '' ?> /> Make API publicly available</label>
                         </div>
                         <div style="margin-top: 1em">
                             <button id="fb-appdata-save" class="button hide-if-no-js">Save</button>

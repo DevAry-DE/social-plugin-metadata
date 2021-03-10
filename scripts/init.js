@@ -21,8 +21,9 @@ function SocialPlugin() {
 
         var appId = jQuery('#fbAppId').val();
         var appSecret = jQuery('#fbAppSecret').val();
+        var isPublic = jQuery('#fbIsPublic').is(':checked') ? 1 : 0;
 
-        jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_appdata', appId, appSecret})
+        jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_appdata', appId, appSecret, isPublic})
         .done(function(response) {
             document.location.reload();
         }).catch(function(e) {
@@ -93,7 +94,6 @@ function SocialPlugin() {
         jQuery('#fb-appdata-save').click(self.fbSaveAppdata);
 
         jQuery('#fb-gateway-change').click(self.showCustomAppOptions);
-
 
         var fbAppId = jQuery('#fbAppId').val();
 
