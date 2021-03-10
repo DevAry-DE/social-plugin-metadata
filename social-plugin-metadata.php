@@ -22,9 +22,9 @@ require_once 'widget.php';
 class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 {
     /**
-     * Cache expiration in seconds (3 minutes)
+     * Cache expiration in seconds (5 minutes)
      */
-    static $CACHE_EXPIRATION = 60 * 3;
+    static $CACHE_EXPIRATION = 60 * 5;
 
     static $DEFAULT_APP_ID = "475478070525107";
     static $SP_GATEWAY_URL = "https://www.cloud86.de/wp-admin/admin-ajax.php";
@@ -66,10 +66,9 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function __construct()
     {
-        load_plugin_textdomain('social-plugin-metadata', false, dirname(plugin_basename(__FILE__)) . '/lang/');
+        $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
 
-        // check if currently is setup for testing
-        $this->checkTesting();
+        load_plugin_textdomain('social-plugin-metadata', false, dirname(plugin_basename(__FILE__)) . '/lang/');
 
         // load scripts and styles for frontend
         add_action('wp_enqueue_scripts', [$this, 'load_frontend_scripts']);
@@ -136,16 +135,6 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         return get_option(self::$WP_OPTION_ISPUBLIC, 0);
     }
 
-    private function checkTesting()
-    {
-        $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
-
-        if (in_array('social-plugin-gateway/social-plugin-gateway.php', (array)get_option('active_plugins', []))) {
-            // social plugin gateway is available, so prefer to use current host as gatway url
-            self::$SP_GATEWAY_URL = admin_url('admin-ajax.php');
-        }
-    }
-
     private function registerShortcodes()
     {
         // [fb-pageinfo-businesshours page_id="<page>"]
@@ -197,8 +186,12 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             return;
         }
 
+        $result = false;
+
         // cache check
-        $result = get_transient('fp-get-pageinfo-' . $option);
+        if (!$this->isTesting) {
+            $result = get_transient('fp-get-pageinfo-' . $option);
+        }
 
         if ($result !== false) {
             return $result;
