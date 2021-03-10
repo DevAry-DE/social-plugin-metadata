@@ -218,7 +218,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
             break;
         case 'LastPost':
-            $result = $this->fbGraphRequest($currentPage['id'] . '/posts?fields=message,permalink_url,created_time&limit=1&access_token=' . $currentPage['access_token']);
+            $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time&limit=1&access_token=' . $currentPage['access_token']);
             break;
         }
 
