@@ -1,4 +1,4 @@
-=== Facebook Get Page Info ===
+=== Social Plugin - Metadata ===
 Contributors: ole1986
 Tags: facebook, show, page info, meta data
 Requires at least: 4.0.0
@@ -6,12 +6,12 @@ Tested up to: 5.3
 Stable tag: trunk
 License: GPLv3
 
-Display page info from facebook pages
+Display meta information from the social network "Facebook" containing Business Hours, About details, Last public post, etc...
 
 == Description ==
 
-Display page info from facebook pages using either a widget or as shortcode.
-Currently supported information are
+Display meta information from the social network "Facebook" using either a widget or as shortcode.
+Currently supported meta information which can be gathered are:
 
 * Business hours
 * Page about text
@@ -25,7 +25,7 @@ Add it through wordpress or unpack the downloaded zip file into your wp-content/
 
 **Quick Guide**
 
-To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages.
+To sychronize and output meta information (E.g. Business hours, About Us, last posts) from facebook pages.
 
 1. Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application
 2. Once successfully logged into your facebook account, choose the pages you wish to output metadata for
@@ -40,6 +40,12 @@ If you prefer to use Shortcodes, the below options are available
 [fb-pageinfo-businesshours page_id="..." empty_message=""]
 [fb-pageinfo-about page_id="..." empty_message=""]
 [fb-pageinfo-lastpost page_id="..." empty_message=""]
+
+== Screenshots ==
+
+1. The settings page
+2. The widget located in a side bar
+3. Output of the widget configured to display business hours
 
 == Changelog ==
 
