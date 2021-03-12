@@ -37,14 +37,14 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
 
         $pages = get_option(Ole1986_FacebokPageInfo::$WP_OPTION_PAGES, []);
 
-        $currentPage = array_pop(
-            array_filter(
-                $pages,
-                function ($v) {
-                    return $v['id'] == $this->fb_page;
-                }
-            )
+        $filteredPages = array_filter(
+            $pages,
+            function ($v) {
+                return $v['id'] == $this->fb_page;
+            }
         );
+
+        $currentPage = array_pop($filteredPages);
 
         $result = Ole1986_FacebokPageInfo::get_instance()->processContentFromOption($currentPage, $this->option);
         

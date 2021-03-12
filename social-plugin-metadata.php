@@ -159,20 +159,20 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         $page_id = $atts['page_id'];
 
-        $currentPage = array_pop(
-            array_filter(
-                $pages,
-                function ($v) use ($page_id) {
-                    return $v['id'] == $page_id;
-                }
-            )
+        $filteredPages = array_filter(
+            $pages,
+            function ($v) use ($page_id) {
+                return $v['id'] == $page_id;
+            }
         );
+
+        $currentPage = array_pop($filteredPages);
 
         $result = $this->processContentFromOption($currentPage, $option);
 
         ob_start();
         
-        $this->{'show' . $option}($result, $atts['empty_message']);
+        $this->{'show' . $option}($result, isset($atts['empty_message']) ? $atts['empty_message'] : '');
         $output_string = ob_get_contents();
 
         ob_end_clean();
