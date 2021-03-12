@@ -24,7 +24,6 @@ class Ole1986_FacebookGateway
 
     /**
      * AJAX: Generate a facebook long-lived user token and fetch the account pages afterwards
-     * A short-lived user token is expected as $_POST['token'] and the userID as $_POST['userID']
      *
      * @return JSON the user accounts (aka the given pages) as json through ajax
      */
@@ -36,8 +35,8 @@ class Ole1986_FacebookGateway
 
         header('Content-Type: application/json');
 
-        $shortLivedToken = $_POST['token'];
-        $userID = $_POST['userID'];
+        $shortLivedToken = sanitize_text_field($_POST['token']);
+        $userID = sanitize_key($_POST['userID']);
         
         $url = "oauth/access_token?client_id=".$this->host->getAppID()."&client_secret=".$this->host->getAppSecret()."&grant_type=fb_exchange_token&fb_exchange_token=".$shortLivedToken;
 

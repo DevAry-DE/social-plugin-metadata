@@ -3,10 +3,10 @@
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
  * Version:     1.0.0
- * Author:      ole1986
- * License: MIT
  * Requires at least: 5.0
  * Requires PHP: 7.0
+ * Author:      ole1986
+ * License: MIT
  * Text Domain: social-plugin-metadata
  * 
  * @author  Ole Köckemann <ole.koeckemann@gmail.com>
@@ -335,16 +335,9 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     public function fbGraphRequest($url)
     {
         $path = 'https://graph.facebook.com/';
+        $resp = wp_remote_get($path . $url);
 
-        $curl_facebook1 = curl_init(); // start curl
-        curl_setopt($curl_facebook1, CURLOPT_URL, $path . $url); // set the url variable to curl
-        curl_setopt($curl_facebook1, CURLOPT_RETURNTRANSFER, true); // return output as string
-
-        $output = curl_exec($curl_facebook1); // execute curl call
-        curl_close($curl_facebook1); // close curl
-        $decode_output = json_decode($output, true); // decode the response (without true this will crash)
-
-        return $decode_output;
+        return json_decode($resp['body'], true);
     }
 
     public function fb_get_page_options()
@@ -368,7 +361,33 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function fb_save_pages()
     {
-        $ok = $this->savePages($_POST['data']);
+        // only allow the below fields and sanitize accordingly
+        $allowedFields = [
+            'access_token' => 'sanitize_text_field',
+            'category' => 'sanitize_text_field',
+            'name' => 'sanitize_text_field',
+            'id' => 'sanitize_key'
+        ];
+
+        $pages = $_POST['data'];
+
+        array_walk($pages, function (&$v) use ($allowedFields) {
+            // filter out only the allowed keys
+            $v = array_filter($v, function ($ik) use ($allowedFields) {
+                return in_array($ik, array_keys($allowedFields));
+
+            }, ARRAY_FILTER_USE_KEY);
+
+            // call the sanitizer given in $allowedFields
+            $tmp = array_map(function ($ik, $iv) use ($allowedFields) {
+                return [$ik => call_user_func($allowedFields[$ik], $iv)];
+            }, array_keys($v), $v);
+
+            // update the value with the limited fields (of course sanitized)
+            $v = array_merge(...$tmp);
+        });
+
+        $ok = $this->savePages($pages);
 
         header('Content-Type: application/json');
         echo json_encode($ok);
@@ -377,19 +396,24 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function fb_save_appdata()
     {
-        if (empty($_POST['appId'])) {
+        $appId = sanitize_key($_POST['appId']);
+        $appSecret = sanitize_key($_POST['appSecret']);
+        $isPublic = sanitize_key($_POST['isPublic']);
+
+
+        if (empty($appId)) {
             delete_option(self::$WP_OPTION_APPID);
         } else {
-            update_option(self::$WP_OPTION_APPID, esc_attr($_POST['appId']));
+            update_option(self::$WP_OPTION_APPID, $appId);
         }
         
-        if (empty($_POST['appSecret'])) {
+        if (empty($appSecret)) {
             delete_option(self::$WP_OPTION_APPSECRET);    
         } else {
-            update_option(self::$WP_OPTION_APPSECRET, esc_attr($_POST['appSecret']));    
+            update_option(self::$WP_OPTION_APPSECRET, $appSecret);
         }
 
-        if (empty($_POST['isPublic'])) {
+        if (empty($isPublic)) {
             delete_option(self::$WP_OPTION_ISPUBLIC);
         } else {
             update_option(self::$WP_OPTION_ISPUBLIC, 1);
