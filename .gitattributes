@@ -1,0 +1,5 @@
+.github/    export-ignore
+.vscode/    export-ignore
+
+Resources/  export-ignore
+.distignore export-ignore
