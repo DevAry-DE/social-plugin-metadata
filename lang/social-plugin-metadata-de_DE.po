@@ -32,11 +32,23 @@ msgstr "Bitte verwende den unten dargestellten Knopf um mit der Synchronisierung
 msgid "Facebook Page:"
 msgstr "Facebook Seite:"
 
+msgid "Facebook Content:"
+msgstr "Facebook Inhalt:"
+
+msgid "Number of posts:"
+msgstr "Anzahl der Beiträge:"
+
 msgid "Show page name:"
 msgstr "Seitenname anzeigen:"
 
 msgid "Business hours"
 msgstr "Geschäftszeiten"
+
+msgid "About us"
+msgstr "Über Uns"
+
+msgid "Last Posts"
+msgstr "Letzte Beiträge"
 
 msgid "Opening hours"
 msgstr "Öffnungszeiten"

@@ -1,3 +1,4 @@
+/* Business hours */
 .social-plugin-metadata-hours {
     display: flex; flex-direction: column;
 }
@@ -5,7 +6,22 @@
     display: flex;
     justify-content: space-between;
 }
+
+/* About */
+.social-plugin-metadata-about {
+    margin-bottom: 1em;
+}
+
+/* Last Posts */
+.social-plugin-metadata-lastpost {
+    margin-bottom: 1em;
+}
+
 .social-plugin-metadata-lastpost-footer {
     display: flex;
     justify-content: space-between;
+}
+
+.social-plugin-metadata-lastpost-created {
+    font-weight: 600;
 }

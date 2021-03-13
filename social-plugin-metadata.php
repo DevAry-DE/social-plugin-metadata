@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version:     1.0.0
+ * Version:     1.0.1
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -101,18 +101,17 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function load_scripts($hook)
     {
-        if (strpos($hook, 'social-plugin-metadata-plugin') === false) {
-            return;
+        if (strpos($hook, 'social-plugin-metadata-plugin') !== false) {
+            wp_enqueue_script('social_plugin', plugins_url('scripts/init.js', __FILE__));
+            wp_localize_script('social_plugin', 'social_plugin', [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'gatewayurl' => empty($this->getAppSecret()) ? self::$SP_GATEWAY_URL : admin_url('admin-ajax.php'),
+                "use_gateway" => $this->useGateway(),
+                'app_id' => $this->getAppID()
+            ]);    
+        } else if (strpos($hook, 'widgets.php') !== false) {
+            wp_enqueue_script('social_plugin', plugins_url('scripts/widget.js', __FILE__));
         }
-
-        wp_enqueue_script('social_plugin', plugins_url('scripts/init.js', __FILE__));
-
-        wp_localize_script('social_plugin', 'social_plugin', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'gatewayurl' => empty($this->getAppSecret()) ? self::$SP_GATEWAY_URL : admin_url('admin-ajax.php'),
-            "use_gateway" => $this->useGateway(),
-            'app_id' => $this->getAppID()
-        ]);
     }
 
     public function getAppID()
@@ -159,6 +158,8 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         $page_id = $atts['page_id'];
 
+        unset($atts['page_id']);
+
         $filteredPages = array_filter(
             $pages,
             function ($v) use ($page_id) {
@@ -168,11 +169,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         $currentPage = array_pop($filteredPages);
 
-        $result = $this->processContentFromOption($currentPage, $option);
+        $result = $this->processContentFromOption($currentPage, $option, $atts);
 
         ob_start();
         
-        $this->{'show' . $option}($result, isset($atts['empty_message']) ? $atts['empty_message'] : '');
+        $this->{'show' . $option}($result, $atts);
         $output_string = ob_get_contents();
 
         ob_end_clean();
@@ -180,7 +181,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         return $output_string;
     }
 
-    public function processContentFromOption($currentPage, $option)
+    public function processContentFromOption($currentPage, $option, $options = [])
     {
         if (empty($currentPage)) {
             return;
@@ -205,7 +206,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
             break;
         case 'LastPost':
-            $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time&limit=1&access_token=' . $currentPage['access_token']);
+            $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time&limit='. ($options['limit'] ?? '') .'&access_token=' . $currentPage['access_token']);
             break;
         }
 
@@ -221,14 +222,14 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     /**
      * Parse the hours taken from facebook graph api and output in proper HTML format
      * 
-     * @param array  $page          the page properties received from facebook api
-     * @param string $empty_message optional message to use when result is empty
+     * @param array $page    the page properties received from facebook api
+     * @param array $options optional message to use when result is empty
      */
-    public function showBusinessHours($page, $empty_message)
+    public function showBusinessHours($page, $options = [])
     {
         if (empty($page['hours'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
             <?php
             return;
         }
@@ -278,58 +279,57 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         echo '</div>';
     }
 
-    public function showAbout($page, $empty_message)
+    public function showAbout($page, $options = [])
     {
         if (empty($page['about'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ?__('Currently there are no entries given in Facebook', 'social-plugin-metadata')  : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
             <?php
             return;
         }
         echo '<div class="social-plugin-metadata-about">'.$page['about'].'</div>';
     }
 
-    public function showLastPost($page, $empty_message)
+    public function showLastPost($page, $options = [])
     {
         if (empty($page['data'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($empty_message) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata')  : $empty_message); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
             <?php
             return;
         }
 
-        $lastPost = array_pop($page['data']);
+        foreach ($page['data'] as $lastPost) {
+            $created = new DateTime($lastPost['created_time']);
+            $now = new DateTime();
 
-        $created = new DateTime($lastPost['created_time']);
-        $now = new DateTime();
+            $diffSeconds = $now->getTimestamp() - $created->getTimestamp();
 
-        $diffSeconds = $now->getTimestamp() - $created->getTimestamp();
+            $diff = $now->diff($created);
+            
+            $friendlyDiff = $diff->format(__('%i minutes ago'));
 
-        $diff = $now->diff($created);
-        
-        $friendlyDiff = $diff->format(__('%i minutes ago'));
-
-        if ($diffSeconds > (60 * 60)) {
-            $friendlyDiff = $diff->format(__('%h hours ago'));
-        }
-        if ($diffSeconds > (60 * 60 * 24)) {
-            $friendlyDiff = $diff->format(__('%d days ago'));
-        }
-        if ($diffSeconds > (60 * 60 * 24 * 3)) {
-            $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
-        }
-
-        ?>
-        <div class="social-plugin-metadata-lastpost">
-            <?php echo $lastPost['message'] ?>
-            <div class="social-plugin-metadata-lastpost-footer">
-                <div class="social-plugin-metadata-lastpost-link">
-                    <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook') ?></a></small>
+            if ($diffSeconds > (60 * 60)) {
+                $friendlyDiff = $diff->format(__('%h hours ago'));
+            }
+            if ($diffSeconds > (60 * 60 * 24)) {
+                $friendlyDiff = $diff->format(__('%d days ago'));
+            }
+            if ($diffSeconds > (60 * 60 * 24 * 3)) {
+                $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
+            }
+            ?>
+            <div class="social-plugin-metadata-lastpost">
+                <?php echo $lastPost['message'] ?>
+                <div class="social-plugin-metadata-lastpost-footer">
+                    <div class="social-plugin-metadata-lastpost-link">
+                        <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook') ?></a></small>
+                    </div>
+                    <div class="social-plugin-metadata-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
                 </div>
-                <div class="social-plugin-metadata-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
             </div>
-        </div>
-        <?php
+            <?php
+        }
     }
 
     public function fbGraphRequest($url)
@@ -452,7 +452,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function settings_page()
     {
-        add_menu_page(__('Social Plugin - Metadata', 'social-plugin-metadata'), __('Social Plugin - Metadata', 'social-plugin-metadata'), 'edit_posts', 'social-plugin-metadata-plugin', [$this, 'settings_page_content'], '', 4);
+        add_management_page(__('Social Plugin - Metadata', 'social-plugin-metadata'), __('Social Plugin - Metadata', 'social-plugin-metadata'), 'edit_posts', 'social-plugin-metadata-plugin', [$this, 'settings_page_content'], 4);
     }
     
     /**
