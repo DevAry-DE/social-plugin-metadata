@@ -29,6 +29,9 @@ msgstr "Verwendet eine Facebook Seite um verschiedene informationen davon darzus
 msgid "Please use the below Login & Sync button to synchronize the facebook pages"
 msgstr "Bitte verwende den unten dargestellten Knopf um mit der Synchronisierung deiner Facebook Seiten zu beginnen"
 
+msgid "Please first register your domain before using the Facebook App"
+msgstr "Bitte registrieren Sie Ihre Domain bevor Sie die Facebook App verwenden"
+
 msgid "Facebook Page:"
 msgstr "Facebook Seite:"
 
