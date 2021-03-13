@@ -332,10 +332,16 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         }
     }
 
-    public function fbGraphRequest($url)
+    public function fbGraphRequest($url, $doPost = false)
     {
         $path = 'https://graph.facebook.com/';
-        $resp = wp_remote_get($path . $url);
+
+        if ($doPost) {
+            $resp = wp_remote_post($path . $url);
+        } else {
+            $resp = wp_remote_get($path . $url);
+        }
+        
 
         return json_decode($resp['body'], true);
     }
@@ -469,6 +475,12 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         <div style="display: flex;">
             <div id="fb-gateway-frame" style="margin: 1em">
                 <h3><?php _e('Connect with Facebook', 'social-plugin-metadata') ?></h3>
+                <div hidden id="fb-gateway-register-container">
+                    <p>
+                        <?php _e('Please register your domain before using the Facebook App', 'social-plugin-metadata') ?>
+                    </p>
+                    <button id="fb-gateway-register" class="button button-primary hide-if-no-js">Register domain</button>
+                </div>
                 <div id="fb-gateway-container">
                     <p>
                         <?php _e('Please use the below Login & Sync button to synchronize the facebook pages', 'social-plugin-metadata') ?>

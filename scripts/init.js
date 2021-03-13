@@ -16,6 +16,29 @@ function SocialPlugin() {
         });
     };
 
+    this.fbCheckAppDomain = function() {
+        jQuery.post(social_plugin.gatewayurl, { action: 'fb_check_domain', domain: document.location.hostname})
+            .done(function(response){
+                if (response) {
+                    jQuery('#fb-gateway-register-container').hide();
+                } else {
+                    jQuery('#fb-gateway-register-container').show();
+                }
+            }).catch(function(e) {
+                AlertMessage('error', 'Unable to register the domain ' +  document.location.hostname);
+            });
+    }
+
+    this.fbRegisterAppDomain = function() {
+        jQuery.post(social_plugin.gatewayurl, { action: 'fb_register_domain', domain: document.location.hostname})
+            .done(function(response){
+                AlertMessage('updated', 'Domain ' + document.location.hostname + ' successfully registered');
+                jQuery('#fb-gateway-register-container').hide();
+            }).catch(function(e) {
+                AlertMessage('error', 'Unable to register the domain ' +  document.location.hostname);
+            });
+    }
+
     this.fbSaveAppdata = function() {
         AlertMessage('', 'Updating info...');
 
@@ -91,6 +114,8 @@ function SocialPlugin() {
     (function () {
         loadFB();
         jQuery('#fb-gateway-login').click(self.fbLogin);
+        jQuery('#fb-gateway-register').click(self.fbRegisterAppDomain);
+
         jQuery('#fb-appdata-save').click(self.fbSaveAppdata);
 
         jQuery('#fb-gateway-change').click(self.showCustomAppOptions);
@@ -103,6 +128,8 @@ function SocialPlugin() {
             jQuery('#fb-gateway-custom').show();
             jQuery('#fb-gateway-our').hide();
         }
+
+        self.fbCheckAppDomain();
     })();
 }
 
