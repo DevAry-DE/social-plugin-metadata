@@ -477,7 +477,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                 <h3><?php _e('Connect with Facebook', 'social-plugin-metadata') ?></h3>
                 <div hidden id="fb-gateway-register-container">
                     <p>
-                        <?php _e('Please first register your domain before using the Facebook App', 'social-plugin-metadata') ?>
+                        <?php _e('Please register your domain first before using the Facebook App', 'social-plugin-metadata') ?>
                     </p>
                     <button id="fb-gateway-register" class="button button-primary hide-if-no-js">Register domain</button>
                 </div>
