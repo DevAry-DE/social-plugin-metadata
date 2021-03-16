@@ -1,0 +1,17 @@
+name: Update version in readme
+
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  UpdateVersion:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Amend version in readme.txt
+      run: |
+        sed -i "s/Stable tag: [[:digit:].]\+/Stable tag: ${GITHUB_REF/refs\/tags\/v/}/g" readme.txt
+        head -10 readme.txt
+      
