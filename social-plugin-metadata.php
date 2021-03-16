@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version:     1.0.0
+ * Version: 1.0.1
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
