@@ -456,8 +456,8 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         <div id="fb-pageinfo-alert" class="notice">
             <p><?php _e('Please follow the instruction below to syncronize your facebook pages') ?></p>
         </div>
-        <div style="display: flex;">
-            <div id="fb-gateway-frame" style="margin: 1em">
+        <div style="display: flex;  flex-wrap: wrap">
+            <div id="fb-gateway-frame" style="margin: 1em; flex-basis: 375px;">
                 <h3><?php _e('Connect with Facebook', 'social-plugin-metadata') ?></h3>
                 <div hidden id="fb-gateway-register-container">
                     <p>
@@ -498,7 +498,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                     </div>
                 </div>
             </div>
-            <div style="margin: 1em">
+            <div style="margin: 1em; flex-basis: 375px; flex-grow: 1">
                 <h3><?php _e('Quick Guide', 'social-plugin-metadata') ?></h3>
                 <p><?php _e('To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages', 'social-plugin-metadata') ?>.</p>
                 <div style="font-family: monospace">
@@ -531,7 +531,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                     <strong>Cloud 86 selbst speichert keine Facebook Daten. <br />Es werden ausschließlich technisch erforderliche Informationen zur Darstellung der Metadaten AUF DIESEM SERVER (<?php echo $_SERVER['HTTP_HOST'] ?>) abgelegt</strong>
                 </p>
                 <div id="rawdata" style="font-family: monospace; white-space: pre; background-color: white; padding: 1em;">
-                    <a href="#" onclick="SocialPlugin.fbRawPages()">DATEN ANZEIGEN</a>
+                    <a href="javascript:void(0)" onclick="SocialPlugin.fbRawPages()">DATEN ANZEIGEN</a>
                 </div>
                 <p>WEITER INFORMATIONEN ZUM DATENSCHUTZ FINDEN SIE <a href="https://www.cloud86.de/datenschutzerklaerung" target="_blank">HIER</a></p>
             </div>
