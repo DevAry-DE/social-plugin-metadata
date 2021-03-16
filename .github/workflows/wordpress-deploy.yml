@@ -7,9 +7,20 @@ jobs:
     if: "!github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
       with:
         submodules: recursive
+    - name: Amend version in several documents
+      run: |
+        echo "Version: ${{ github.event.release.tag_name }}"
+        sed -i 's/Stable tag: [[:digit:].]\+/Stable tag: ${{ github.event.release.tag_name }}/g' readme.txt
+        sed -i 's/* Version:.*[[:digit:].]\+/* Version: ${{ github.event.release.tag_name }}/g' social-plugin-metadata.php
+    - name: Commit Changes
+      run: |
+        git fetch origin master
+        git checkout master
+        git -c user.name="ole1986" -c user.email="ole.koeckemann@gmail.com" commit readme.txt social-plugin-metadata.php --no-verify -m "Updated version to ${{ steps.get_version.outputs.VERSION }}"
+        git push
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@master
       env:
