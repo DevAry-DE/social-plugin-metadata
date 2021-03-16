@@ -367,31 +367,15 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function fb_save_pages()
     {
-        // only allow the below fields and sanitize accordingly
-        $allowedFields = [
-            'access_token' => 'sanitize_text_field',
-            'category' => 'sanitize_text_field',
-            'name' => 'sanitize_text_field',
-            'id' => 'sanitize_key'
-        ];
-
-        $pages = $_POST['data'];
-
-        array_walk($pages, function (&$v) use ($allowedFields) {
-            // filter out only the allowed keys
-            $v = array_filter($v, function ($ik) use ($allowedFields) {
-                return in_array($ik, array_keys($allowedFields));
-
-            }, ARRAY_FILTER_USE_KEY);
-
-            // call the sanitizer given in $allowedFields
-            $tmp = array_map(function ($ik, $iv) use ($allowedFields) {
-                return [$ik => call_user_func($allowedFields[$ik], $iv)];
-            }, array_keys($v), $v);
-
-            // update the value with the limited fields (of course sanitized)
-            $v = array_merge(...$tmp);
-        });
+        // changed as requested by Wordpress Review Teams
+        $pages = array_map(function ($page) {
+            return  [
+                'access_token' => sanitize_text_field($page['access_token']),
+                'category' => sanitize_text_field($page['category']),
+                'name' => sanitize_text_field($page['name']),
+                'id' => sanitize_key($page['id']),
+            ];
+        }, $_POST['data']);
 
         $ok = $this->savePages($pages);
 
