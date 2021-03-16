@@ -26,5 +26,5 @@ jobs:
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-        SLUG: fb-get-pageinfo
+        SLUG: social-page-metadata
         ASSETS_DIR: assets
