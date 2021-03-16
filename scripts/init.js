@@ -83,8 +83,7 @@ function SocialPlugin() {
                     AlertMessage('error', 'Something went wrong contacting ' + url.hostname + ': ' + e.responseJSON.error.message);
                 });
             }
-            console.log(response);
-        },  {scope: 'public_profile,pages_show_list'});
+        },  {scope: 'public_profile, pages_show_list, pages_read_engagement'});
     };
 
     this.showCustomAppOptions = function() {
