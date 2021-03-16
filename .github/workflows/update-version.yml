@@ -1,0 +1,30 @@
+name: Update version in readme
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  UpdateVersion:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/v}
+    - name: Amend version in several documents
+      run: |
+        echo "Version: ${{ steps.get_version.outputs.VERSION }}"
+        sed -i 's/Stable tag: [[:digit:].]\+/Stable tag: ${{ steps.get_version.outputs.VERSION }}/g' readme.txt
+        sed -i 's/* Version:.*[[:digit:].]\+/* Version: ${{ steps.get_version.outputs.VERSION }}/g' social-plugin-metadata.php
+    - name: Commit Changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git fetch origin master
+        git checkout master
+        git -c user.name="ole1986" -c user.email="ole.koeckemann@gmail.com" commit readme.txt social-plugin-metadata.php --no-verify -m "Updated version to ${{ steps.get_version.outputs.VERSION }}"
+        git push
