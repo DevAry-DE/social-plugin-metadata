@@ -57,7 +57,7 @@ msgid "Opening hours"
 msgstr "Öffnungszeiten"
 
 msgid "%i minutes ago"
-msgstr "vor %i minuten"
+msgstr "vor %i Minuten"
 
 msgid "%h hours ago"
 msgstr "vor %h Stunden"
