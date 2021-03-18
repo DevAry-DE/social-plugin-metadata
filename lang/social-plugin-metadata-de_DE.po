@@ -74,8 +74,8 @@ msgstr "Seitenname anzeigen"
 msgid "Custom message when empty (optional):"
 msgstr "Benutzerdefinierte Meldung bei leerem Inhalt (optional):"
 
-msgid "Currently there are no entries given in Facebook"
-msgstr "Derzeit sind keine Enträge in Facebook verfügbar"
+msgid "Currently there are no entries available on Facebook"
+msgstr "Derzeit sind keine Einträge auf Facebook verfügbar"
 
 msgid "Something went wrong. Please choose at least one facebook page after login"
 msgstr "Etwas ist schief gelaufen. Bitte wählen Sie mindestens eine Facebook Seite nach dem einloggen aus"

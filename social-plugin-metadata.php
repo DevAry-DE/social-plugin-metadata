@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.1
+ * Version: 1.0.2
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -229,7 +229,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['hours'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
             <?php
             return;
         }
@@ -283,7 +283,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['about'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
             <?php
             return;
         }
@@ -294,7 +294,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (empty($page['data'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries given in Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
             <?php
             return;
         }
@@ -307,23 +307,28 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
             $diff = $now->diff($created);
             
-            $friendlyDiff = $diff->format(__('%i minutes ago'));
+            $friendlyDiff = $diff->format(__('%i minutes ago', 'social-plugin-metadata'));
 
             if ($diffSeconds > (60 * 60)) {
-                $friendlyDiff = $diff->format(__('%h hours ago'));
+                $friendlyDiff = $diff->format(__('%h hours ago', 'social-plugin-metadata'));
             }
             if ($diffSeconds > (60 * 60 * 24)) {
-                $friendlyDiff = $diff->format(__('%d days ago'));
+                $friendlyDiff = $diff->format(__('%d days ago', 'social-plugin-metadata'));
             }
             if ($diffSeconds > (60 * 60 * 24 * 3)) {
                 $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
             }
             ?>
             <div class="social-plugin-metadata-lastpost">
-                <?php echo $lastPost['message'] ?>
+                <div><?php echo $lastPost['message'] ?></div>
                 <div class="social-plugin-metadata-lastpost-footer">
                     <div class="social-plugin-metadata-lastpost-link">
-                        <small><a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank"><?php _e('Open on Facebook') ?></a></small>
+                        <small>
+                        <a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" style="width: 18px; vertical-align: middle;" />
+                            <?php _e('Open on Facebook', 'social-plugin-metadata') ?>
+                        </a>
+                        </small>
                     </div>
                     <div class="social-plugin-metadata-lastpost-created"><small><?php echo $friendlyDiff; ?></small></div>
                 </div>
