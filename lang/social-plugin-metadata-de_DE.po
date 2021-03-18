@@ -124,3 +124,6 @@ msgstr "Erstelle Sie Ihre eigene %s oder verwenden Sie unseren externen Dienst"
 
 msgid "Dependent on details given in the '%s' you get asked to connect your Facebook Account with the following app"
 msgstr "Abhängig von den Angaben in '%s' werden Sie aufgefordert Ihr Facebook Konto mit nachstehender app zu verbinden"
+
+msgid "Some information has been updated on Facebook"
+msgstr "Einige informationen wurden auf Facebook aktualisiert"

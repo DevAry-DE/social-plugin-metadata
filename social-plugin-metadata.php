@@ -206,7 +206,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             $result = $this->fbGraphRequest($currentPage['id'] . '/?fields=about&access_token=' . $currentPage['access_token']);
             break;
         case 'LastPost':
-            $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time&limit='. ($options['limit'] ?? '') .'&access_token=' . $currentPage['access_token']);
+            $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time,status_type&limit='. ($options['limit'] ?? '') .'&access_token=' . $currentPage['access_token']);
             break;
         }
 
@@ -302,6 +302,10 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         foreach ($page['data'] as $lastPost) {
             $created = new DateTime($lastPost['created_time']);
             $now = new DateTime();
+
+            if (!isset($lastPost['message'])) {
+                $lastPost['message'] = '<i>' . __('Some information has been updated on Facebook', 'social-plugin-metadata') .'</i>';
+            }
 
             $diffSeconds = $now->getTimestamp() - $created->getTimestamp();
 
