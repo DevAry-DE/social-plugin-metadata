@@ -292,12 +292,25 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function showLastPost($page, $options = [])
     {
+        if (isset($options['max_age'])) {
+            $now = new DateTime();
+            $page['data'] = array_filter($page['data'], function ($p) use ($now, $options) {
+                $d = new DateTime($p['created_time']);
+                $diff = ($now->getTimestamp() - $d->getTimestamp()) / 60;
+
+                return $diff < intval($options['max_age']);
+            });
+        }
+        
+
         if (empty($page['data'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no updated posted available on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
             <?php
             return;
         }
+
+        echo '<div class="social-plugin-lastposts">';
 
         foreach ($page['data'] as $lastPost) {
             $created = new DateTime($lastPost['created_time']);
@@ -339,6 +352,8 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             </div>
             <?php
         }
+
+        echo '</div>';
     }
 
     public function fbGraphRequest($url, $doPost = false)
@@ -531,7 +546,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                         <ul>
                             <li>[fb-pageinfo-businesshours page_id="..." empty_message=""]</li>
                             <li>[fb-pageinfo-about page_id="..." empty_message=""]</li>
-                            <li>[fb-pageinfo-lastpost page_id="..." empty_message=""]</li>
+                            <li>[fb-pageinfo-lastpost page_id="..." limit="..." max_age="..." empty_message=""]</li>
                         </ul>
                     </div>
                 </div>

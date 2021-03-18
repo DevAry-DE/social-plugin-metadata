@@ -77,6 +77,9 @@ msgstr "Benutzerdefinierte Meldung bei leerem Inhalt (optional):"
 msgid "Currently there are no entries available on Facebook"
 msgstr "Derzeit sind keine Einträge auf Facebook verfügbar"
 
+msgid "Currently there are no updated posted available on Facebook"
+msgstr "Derzeit sind keine aktuellen Beiträge auf Facebook verfügbar"
+
 msgid "Something went wrong. Please choose at least one facebook page after login"
 msgstr "Etwas ist schief gelaufen. Bitte wählen Sie mindestens eine Facebook Seite nach dem einloggen aus"
 

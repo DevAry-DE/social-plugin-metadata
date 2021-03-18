@@ -40,7 +40,7 @@ If you prefer to use Shortcodes, the below options are available
 
 [fb-pageinfo-businesshours page_id="..." empty_message=""]
 [fb-pageinfo-about page_id="..." empty_message=""]
-[fb-pageinfo-lastpost page_id="..." limit="..." empty_message=""]
+[fb-pageinfo-lastpost page_id="..." limit="..." max_age="..." empty_message=""]
 
 == Screenshots ==
 
