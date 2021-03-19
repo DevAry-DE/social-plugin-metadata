@@ -65,8 +65,8 @@ msgstr "vor %h Stunden"
 msgid "%d days ago"
 msgstr "vor %d Tagen"
 
-msgid "Open on Facebook"
-msgstr "Auf Facebook öffnen"
+msgid "Show on Facebook"
+msgstr "In Facebook zeigen"
 
 msgid "Show page name"
 msgstr "Seitenname anzeigen"

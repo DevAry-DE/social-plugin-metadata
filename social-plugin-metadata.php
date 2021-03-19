@@ -340,7 +340,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                         <small>
                         <a href="<?php echo $lastPost['permalink_url']; ?>" target="_blank">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" style="width: 18px; vertical-align: middle;" />
-                            <?php _e('Open on Facebook', 'social-plugin-metadata') ?>
+                            <?php _e('Show on Facebook', 'social-plugin-metadata') ?>
                         </a>
                         </small>
                     </div>
