@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -58,16 +58,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
         return self::$instance;
     }
-
-    private $isTesting = false;
-
     /**
      * constructor overload of the WP_Widget class to initialize the media widget
      */
     public function __construct()
     {
-        $this->isTesting = $_SERVER['HTTP_HOST'] == 'test.cloud86.de';
-
         load_plugin_textdomain('social-plugin-metadata', false, dirname(plugin_basename(__FILE__)) . '/lang/');
 
         // load scripts and styles for frontend
@@ -183,15 +178,17 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function processContentFromOption($currentPage, $option, $options = [])
     {
+        global $post;
+
         if (empty($currentPage)) {
             return;
         }
 
         $result = false;
 
-        // cache check
-        if (!$this->isTesting) {
-            $result = get_transient('fp-get-pageinfo-' . $option);
+        // apply cache when the current visitor has no edit_pages caps
+        if (!current_user_can('edit_page', $post->ID)) {
+            $result = get_transient('social-plugin-cache-' . $currentPage['id'] . '-' . $option);
         }
 
         if ($result !== false) {
@@ -211,9 +208,9 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         }
 
         // only cache when outside test environment
-        if (!$this->isTesting) {
-            // expire in 1 minute
-            set_transient('fp-get-pageinfo-' . $option, $result, self::$CACHE_EXPIRATION);
+        if (!current_user_can('edit_page', $post->ID)) {
+            // expire in X minutes given by CACHE_EXPIRATION
+            set_transient('social-plugin-cache-' . $currentPage['id'] . '-' . $option, $result, self::$CACHE_EXPIRATION);
         }
 
         return $result;
