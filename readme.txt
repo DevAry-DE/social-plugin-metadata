@@ -50,4 +50,4 @@ If you prefer to use Shortcodes, the below options are available
 
 == Changelog ==
 
-Changelog can be found at https://github.com/Cloud-86/fb-get-pageinfo/releases
+Changelog can be found on [Github project page](https://github.com/Cloud-86/social-plugin-metadata/releases) 
