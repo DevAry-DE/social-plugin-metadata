@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.3
+ * Version: 1.0.4
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -298,6 +298,10 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
                 return $diff < intval($options['max_age']);
             });
         }
+
+        if (isset($options['max_words'])) {
+            $maxWords = intval($options['max_words']);
+        }
         
 
         if (empty($page['data'])) {
@@ -332,6 +336,16 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
             if ($diffSeconds > (60 * 60 * 24 * 3)) {
                 $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
             }
+
+            if (!empty($maxWords)) {
+                $l = strlen($lastPost['message']);
+                $lastPost['message'] = implode(' ', array_slice(explode(' ', $lastPost['message']), 0, $maxWords));
+
+                if (strlen($lastPost['message']) < $l) {
+                    $lastPost['message'] .= '...';
+                }
+            }
+
             ?>
             <div class="social-plugin-metadata-lastpost">
                 <div><?php echo $lastPost['message'] ?></div>
