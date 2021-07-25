@@ -6,11 +6,11 @@
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
- * License: MIT
+ * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
  * 
  * @author  Ole Köckemann <ole.koeckemann@gmail.com>
- * @license MIT
+ * @license MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  */
 
 defined('ABSPATH') or die('No script kiddies please!');
