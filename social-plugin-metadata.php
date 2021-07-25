@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -187,7 +187,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         $result = false;
 
         // apply cache when the current visitor has no edit_pages caps
-        if (!current_user_can('edit_page', $post->ID)) {
+        if ($post && !current_user_can('edit_page', $post->ID)) {
             $result = get_transient('social-plugin-cache-' . $currentPage['id'] . '-' . $option);
         }
 
@@ -208,7 +208,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         }
 
         // only cache when outside test environment
-        if (!current_user_can('edit_page', $post->ID)) {
+        if ($post && !current_user_can('edit_page', $post->ID)) {
             // expire in X minutes given by CACHE_EXPIRATION
             set_transient('social-plugin-cache-' . $currentPage['id'] . '-' . $option, $result, self::$CACHE_EXPIRATION);
         }

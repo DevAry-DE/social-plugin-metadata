@@ -50,7 +50,8 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
         
         // before and after widget arguments are defined by themes
         echo $args['before_widget'];
-        echo $args['before_title'] . $this->title . $args['after_title'];
+        echo $args['before_title'] . $this->title . '&nbsp;' . $args['after_title'];
+        
         ?>
         <div id="fb-pageinfo-widget">
             <?php if (empty($result['error'])) : ?>
@@ -72,7 +73,11 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
                 
             <?php endif; ?>
         </div>
-
+        <?php if (is_admin()) : ?>
+            <div style='position: relative; margin-top: 2em'>
+                <div style='position: absolute; font-size: 70%; text-align: right; bottom: 0px; right: 0px; background-color: #f0f0f0; padding: 0.5em;'><?php  _e('Social plugin - Metadata Widget', 'social-plugin-metadata')  ?></div>
+            </div>
+        <?php endif; ?>
         <?php
         echo $args['after_widget'];
     }
