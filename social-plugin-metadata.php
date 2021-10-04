@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.5
+ * Version: 1.0.6
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -376,8 +376,11 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         } else {
             $resp = wp_remote_get($path . $url);
         }
-        
 
+        if ($resp instanceof \WP_Error) {
+            return [];
+        }
+        
         return json_decode($resp['body'], true);
     }
 
