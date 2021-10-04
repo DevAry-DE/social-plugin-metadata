@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.6
+ * Version: 1.0.7
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -291,7 +291,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
     {
         if (isset($options['max_age'])) {
             $now = new DateTime();
-            $page['data'] = array_filter($page['data'], function ($p) use ($now, $options) {
+            $page['data'] = array_filter($page['data'] ?? [], function ($p) use ($now, $options) {
                 $d = new DateTime($p['created_time']);
                 $diff = ($now->getTimestamp() - $d->getTimestamp()) / 60;
 
