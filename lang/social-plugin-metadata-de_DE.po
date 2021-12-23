@@ -130,3 +130,6 @@ msgstr "Abhängig von den Angaben in '%s' werden Sie aufgefordert Ihr Facebook K
 
 msgid "Some information has been updated on Facebook"
 msgstr "Einige informationen wurden auf Facebook aktualisiert"
+
+msgid "Facebook page not found or no access"
+msgstr "Facebook Seite nicht gefunden oder kein Zugriff"

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.0.7
+ * Version: 1.0.8
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author:      ole1986
@@ -169,6 +169,7 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
         ob_start();
         
         $this->{'show' . $option}($result, $atts);
+        
         $output_string = ob_get_contents();
 
         ob_end_clean();
@@ -224,6 +225,13 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
      */
     public function showBusinessHours($page, $options = [])
     {
+        if (empty($page)) {
+            ?>
+            <div class="social-plugin-metadata-empty" style="text-align: center; font-size: smaller"><strong>[social-plugin-metadata]</strong><br /><?php echo sprintf(__('Facebook page not found or no access', 'social-plugin-metadata')); ?></div>
+            <?php
+            return;
+        }
+
         if (empty($page['hours'])) {
             ?>
             <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
@@ -278,6 +286,13 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function showAbout($page, $options = [])
     {
+        if (empty($page)) {
+            ?>
+            <div class="social-plugin-metadata-empty" style="text-align: center; font-size: smaller"><strong>[social-plugin-metadata]</strong><br /><?php echo sprintf(__('Facebook page not found or no access', 'social-plugin-metadata')); ?></div>
+            <?php
+            return;
+        }
+
         if (empty($page['about'])) {
             ?>
             <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no entries available on Facebook', 'social-plugin-metadata') : $options['empty_message']); ?></div>
@@ -289,6 +304,13 @@ class Ole1986_FacebokPageInfo implements Ole1986_IFacebookGatewayHost
 
     public function showLastPost($page, $options = [])
     {
+        if (empty($page)) {
+            ?>
+            <div class="social-plugin-metadata-empty" style="text-align: center; font-size: smaller"><strong>[social-plugin-metadata]</strong><br /><?php echo sprintf(__('Facebook page not found or no access', 'social-plugin-metadata')); ?></div>
+            <?php
+            return;
+        }
+
         if (isset($options['max_age'])) {
             $now = new DateTime();
             $page['data'] = array_filter($page['data'] ?? [], function ($p) use ($now, $options) {
