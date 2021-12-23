@@ -2,7 +2,7 @@
 Contributors: ole1986
 Tags: facebook, show, page info, meta data
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 7.0
 Stable tag: 1.0.7
 License: GPLv3
