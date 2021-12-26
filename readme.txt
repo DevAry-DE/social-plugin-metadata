@@ -38,9 +38,9 @@ To sychronize and output meta information (E.g. Business hours, About Us, last p
 
 If you prefer to use Shortcodes, the below options are available
 
-[fb-pageinfo-businesshours page_id="..." empty_message=""]
-[fb-pageinfo-about page_id="..." empty_message=""]
-[fb-pageinfo-lastpost page_id="..." limit="..." max_age="..." empty_message=""]
+[social-businesshours page_id="..." empty_message=""]
+[social-about page_id="..." empty_message=""]
+[social-lastpost page_id="..." limit="..." max_age="..." empty_message=""]
 
 == Screenshots ==
 

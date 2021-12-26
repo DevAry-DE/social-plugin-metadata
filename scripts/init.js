@@ -36,7 +36,7 @@ function SocialPlugin() {
     }
 
     this.fbSavePages = function(data) {
-        AlertMessage('', 'Saving data received from ' + (social_plugin.use_gateway ? 'remote' : 'local') + ' gateway ...');
+        AlertMessage('', 'Saving data...');
     
         jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_pages', data })
             .done(function(response){
@@ -56,12 +56,11 @@ function SocialPlugin() {
             if (response.status == 'connected') {
                 response.authResponse.accessToken;
     
-                jQuery.post(social_plugin.gatewayurl, { action: 'fb_get_pages', userID: response.authResponse.userID, token: response.authResponse.accessToken})
+                jQuery.post(social_plugin.ajaxurl, { action: 'fb_get_pages', userID: response.authResponse.userID, token: response.authResponse.accessToken})
                 .done(function(response){
                     self.fbSavePages(response.data);
                 }).catch(function(e) {
-                    var url = new URL(social_plugin.gatewayurl);
-                    AlertMessage('error', 'Something went wrong contacting ' + url.hostname + ': ' + e.responseJSON.error.message);
+                    AlertMessage('error', 'Something went wrong: ' + e.responseJSON.error.message);
                 });
             }
         },  {scope: 'public_profile, pages_show_list, pages_read_engagement'});

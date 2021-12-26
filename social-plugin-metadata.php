@@ -94,7 +94,6 @@ class SocialPlugin extends FacebookRestApi
             wp_enqueue_script('social_plugin', plugins_url('scripts/init.js', __FILE__));
             wp_localize_script('social_plugin', 'social_plugin', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'gatewayurl' => admin_url('admin-ajax.php'),
                 'app_id' => $this->getAppID()
             ]);    
         } else if (strpos($hook, 'widgets.php') !== false) {
@@ -114,18 +113,18 @@ class SocialPlugin extends FacebookRestApi
 
     private function registerShortcodes()
     {
-        // [fb-pageinfo-businesshours page_id="<page>"]
-        add_shortcode('fb-pageinfo-businesshours', function ($atts, $content, $tag) {
+        // [social-businesshours page_id="<page>"]
+        add_shortcode('social-businesshours', function ($atts, $content, $tag) {
             return $this->shortcodeCallback('BusinessHours', $atts, $content, $tag);
         });
 
-        // [fb-pageinfo-about page_id="<page>"]
-        add_shortcode('fb-pageinfo-about', function ($atts, $content, $tag) {
+        // [social-about page_id="<page>"]
+        add_shortcode('social-about', function ($atts, $content, $tag) {
             return $this->shortcodeCallback('About', $atts, $content, $tag);
         });
 
-        // [fb-pageinfo-lastpost page_id="<page>"]
-        add_shortcode('fb-pageinfo-lastpost', function ($atts, $content, $tag) {
+        // [social-lastpost page_id="<page>"]
+        add_shortcode('social-lastpost', function ($atts, $content, $tag) {
             return $this->shortcodeCallback('LastPost', $atts, $content, $tag);
         });
     }
@@ -510,9 +509,9 @@ class SocialPlugin extends FacebookRestApi
                 <div style="font-family: monospace">
                     <div>
                         <ul>
-                            <li>[fb-pageinfo-businesshours page_id="..." empty_message=""]</li>
-                            <li>[fb-pageinfo-about page_id="..." empty_message=""]</li>
-                            <li>[fb-pageinfo-lastpost page_id="..." limit="..." max_age="..." empty_message=""]</li>
+                            <li>[social-businesshours page_id="..." empty_message=""]</li>
+                            <li>[social-about page_id="..." empty_message=""]</li>
+                            <li>[social-lastpost page_id="..." limit="..." max_age="..." empty_message=""]</li>
                         </ul>
                     </div>
                 </div>

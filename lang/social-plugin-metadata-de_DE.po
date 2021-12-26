@@ -27,7 +27,7 @@ msgid "Used to output several information gathered from a facebook page"
 msgstr "Verwendet eine Facebook Seite um verschiedene informationen davon darzustellen"
 
 msgid "Please use the below Login & Sync button to synchronize the facebook pages"
-msgstr "Bitte verwende den unten dargestellten Knopf um mit der Synchronisierung deiner Facebook Seiten zu beginnen"
+msgstr "Bitte verwende die unten dargestellte Schaltfläche um die  Facebook Seiten zu synchronisieren"
 
 msgid "Please register your domain first before using the Facebook App"
 msgstr "Bitte registrieren Sie Ihre Domain bevor Sie die Facebook App verwenden"
