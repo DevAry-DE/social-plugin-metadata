@@ -11,7 +11,7 @@ Display meta information from the social network "Facebook" containing Business 
 
 == Description ==
 
-Display meta information from the social network "Facebook" using either a widget or as shortcode.
+Display meta information from the social network "Facebook" using either a widget or shortcode.
 Currently supported meta information which can be gathered are:
 
 * Business hours
@@ -26,13 +26,13 @@ Add it through wordpress or unpack the downloaded zip file into your wp-content/
 
 **Quick Guide**
 
-To sychronize and output meta information (E.g. Business hours, About Us, last posts) from facebook pages.
+To sychronize and output meta information (E.g. Business hours, About Us, last posts) from facebook pages, follow the below steps:
 
-1. Use the button Login and Sync (left side) to connect your facebook account with the Cloud 86 / Link Page application
-2. Once successfully logged into your facebook account, choose the pages you wish to output metadata for
-3. Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page
-4. To display the content on your front page, move the widget Facebook page info Widget into a desired widget area
-5. Finally save the widget settings and check the output on the front page
+1. Register as Facebook Developer and create a new [Facebook App](https://developers.facebook.com/apps/)
+2. Fill in the Facebook App ID and App secret from the app you just created into the Social Plugin (Menu "Tool" -> "Social Plugin - Metadata")
+3. Use the "Login and Sync" button to connect your facebook account with your Facebook App
+4. Switch to the Appearance -> Widget page once successfully logged in and pick the "Social Plugin - Metadata"
+5. Setup the widget for the page and content you want to display on frontend
 
 **Shortcodes**
 

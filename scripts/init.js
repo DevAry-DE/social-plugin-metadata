@@ -16,42 +16,23 @@ function SocialPlugin() {
         });
     };
 
-    this.fbCheckAppDomain = function() {
-        jQuery.post(social_plugin.gatewayurl, { action: 'fb_check_domain', domain: document.location.hostname})
-            .done(function(response){
-                if (response) {
-                    jQuery('#fb-gateway-register-container').hide();
-                } else {
-                    jQuery('#fb-gateway-register-container').show();
-                }
-            }).catch(function(e) {
-                AlertMessage('error', 'Unable to register the domain ' +  document.location.hostname);
-            });
-    }
+    this.fbSaveAppdata = function(e) {
+        e.preventDefault();
 
-    this.fbRegisterAppDomain = function() {
-        jQuery.post(social_plugin.gatewayurl, { action: 'fb_register_domain', domain: document.location.hostname})
-            .done(function(response){
-                AlertMessage('updated', 'Domain ' + document.location.hostname + ' successfully registered');
-                jQuery('#fb-gateway-register-container').hide();
-            }).catch(function(e) {
-                AlertMessage('error', 'Unable to register the domain ' +  document.location.hostname);
-            });
-    }
-
-    this.fbSaveAppdata = function() {
         AlertMessage('', 'Updating info...');
 
-        var appId = jQuery('#fbAppId').val();
-        var appSecret = jQuery('#fbAppSecret').val();
-        var isPublic = jQuery('#fbIsPublic').is(':checked') ? 1 : 0;
+        var formData = new FormData(e.target);
 
-        jQuery.post(social_plugin.ajaxurl, { action: 'fb_save_appdata', appId, appSecret, isPublic})
-        .done(function(response) {
+        fetch(social_plugin.ajaxurl + '?action=fb_save_appdata', {
+            method: 'POST',
+            body: formData
+        }).then(function() {
             document.location.reload();
         }).catch(function(e) {
             AlertMessage('error', 'We encountered an error. Please try again later...');
         });
+
+        return false;
     }
 
     this.fbSavePages = function(data) {
@@ -113,22 +94,16 @@ function SocialPlugin() {
     (function () {
         loadFB();
         jQuery('#fb-gateway-login').click(self.fbLogin);
-        jQuery('#fb-gateway-register').click(self.fbRegisterAppDomain);
 
-        jQuery('#fb-appdata-save').click(self.fbSaveAppdata);
+        document.getElementById('fb-configure-app').onsubmit = self.fbSaveAppdata;
 
         jQuery('#fb-gateway-change').click(self.showCustomAppOptions);
 
         var fbAppId = jQuery('#fbAppId').val();
 
-        if (!fbAppId) {
-            jQuery('#fb-gateway-custom').hide();
-        } else {
-            jQuery('#fb-gateway-custom').show();
-            jQuery('#fb-gateway-our').hide();
+        if (fbAppId) {
+            jQuery('#fb-login-app').show();
         }
-
-        self.fbCheckAppDomain();
     })();
 }
 

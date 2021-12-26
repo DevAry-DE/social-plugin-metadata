@@ -1,9 +1,11 @@
 <?php
+namespace Cloud86\WP\Social;
+
 /**
  * The Facebook page info Widget used to display in sidebars or footer bars (dependent on the theme)
  */
 
-class Ole1986_FacebokPageInfoWidget extends WP_Widget
+class SocialPluginWidget extends \WP_Widget
 {
     /**
      * Supported option to output various page content
@@ -35,7 +37,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
     {
         $this->parseSettings($instance);
 
-        $pages = get_option(Ole1986_FacebokPageInfo::$WP_OPTION_PAGES, []);
+        $pages = get_option(SocialPlugin::$WP_OPTION_PAGES, []);
 
         $filteredPages = array_filter(
             $pages,
@@ -46,7 +48,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
 
         $currentPage = array_pop($filteredPages);
 
-        $result = Ole1986_FacebokPageInfo::get_instance()->processContentFromOption($currentPage, $this->option, $this->options);
+        $result = SocialPlugin::get_instance()->processContentFromOption($currentPage, $this->option, $this->options);
         
         // before and after widget arguments are defined by themes
         echo $args['before_widget'];
@@ -60,7 +62,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
                 <?php endif; ?>
                     <?php 
                     if (!empty($this->option)) {
-                        Ole1986_FacebokPageInfo::get_instance()->{'show' . $this->option}($result, $this->options);
+                        SocialPlugin::get_instance()->{'show' . $this->option}($result, $this->options);
                     } else {
                         echo "<div><small>No option given for ". __('Facebook page info Widget', 'social-plugin-metadata') ."<small></div>";
                     }
@@ -90,7 +92,7 @@ class Ole1986_FacebokPageInfoWidget extends WP_Widget
     public function form($instance)
     {
         $this->parseSettings($instance);
-        $pages = get_option(Ole1986_FacebokPageInfo::$WP_OPTION_PAGES, []);
+        $pages = get_option(SocialPlugin::$WP_OPTION_PAGES, []);
         ?>
         <div class="social-widget-metadata-widget">
             <p>

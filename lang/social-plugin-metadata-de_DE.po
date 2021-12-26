@@ -89,44 +89,11 @@ msgstr "Bitte folgen Sie den nachstehenden Instruktionen um die Facebook Seiten 
 msgid "Connect with Facebook"
 msgstr "Mit Facebook verbinden"
 
-msgid "Setup your Facebook App (optional)"
-msgstr "Konfiguriere deine Facebook App (optional)"
+msgid "Build your own %s and configure the APP ID as well as the APP KEY here"
+msgstr "Erstelle eine eigene %s und konfiguriere die APP ID sowie den APP KEY hier"
 
-msgid "Quick Guide"
-msgstr "Kurzanleitung"
-
-msgid "To sychronize and outpout meta information (E.g. Business hours, About Us, last posts) from facebook pages"
-msgstr "Zur Syncronisierung und Ausgabe von Metadaten (Öffnungszeiten, Titel, Beschreibung, Letzte Beiträge) aus Facebook Seiten"
-
-msgid "Use the button Login and Sync (left side) to connect your facebook account with the Facebook App"
-msgstr "Verwenden Sie den Knopf Login and Sync (Links) um Ihr Facebook Konto mit der facebook App zu verbinden"
-
-msgid "Once successfully logged into your facebook account, choose the pages you wish to output metadata for"
-msgstr "Nach erfolgreicher Facebook Anmeldung wählen Sie die gewünschten Seiten aus für die Sie Metadaten ausgeben möchten"
-
-msgid "Is your account properly connected and the syncronization completed, you can switch to the Appearance -> Widget page"
-msgstr "Ist die Freigabe der Facebook Seiten und die Synchronisierung erfolgreich abgeschlossen, können Sie zum Abschnitt Design -> Widgets wechseln."
-
-msgid "To display the content on your front page, move the widget %s into a desired widget area"
-msgstr "Um den Inhalt des Widgets auf der Frontseite darzustellen, schieben Sie das widget %s in eine Bereich Ihrer Wahl"
-
-msgid "Finally save the widget settings and check the output on the front page"
-msgstr "Abschließend erfolgt das Speichern der gewünschten Widget Einstellung und die Sichtung der Frontseite"
-
-msgid "If you prefer to use %s, the below options are available"
-msgstr "Falls Sie den Einsatz von %s bevorzugen, stehen Ihnen nachfolgende Optionen zur Verfügung"
-
-msgid "Currently you are using our Facebook App to gather necessary page information"
-msgstr "Aktuell verwenden Sie unsere Facebook App um Seiteninformationen zu laden"
-
-msgid "Use my Facebook App"
-msgstr "Verwende meine Facebook App"
-
-msgid "Build your own %s or use our service gateway"
-msgstr "Erstelle Sie Ihre eigene %s oder verwenden Sie unseren externen Dienst"
-
-msgid "Dependent on details given in the '%s' you get asked to connect your Facebook Account with the following app"
-msgstr "Abhängig von den Angaben in '%s' werden Sie aufgefordert Ihr Facebook Konto mit nachstehender app zu verbinden"
+msgid "Optionally you can also use shortcodes to displav the related information from Facebook (E.g. Business hours, About Us or the last posts)"
+msgstr "Alternativ können Sie auch shortcodes verwenden um die erforderlichen Informationen aus Facebook darzustellen (z.B. Öffnungszeiten, Über uns oder die letzten Beiträge) "
 
 msgid "Some information has been updated on Facebook"
 msgstr "Einige informationen wurden auf Facebook aktualisiert"
