@@ -93,10 +93,13 @@ msgid "Build your own %s and configure the APP ID as well as the APP KEY here"
 msgstr "Erstelle eine eigene %s und konfiguriere die APP ID sowie den APP KEY hier"
 
 msgid "Optionally you can also use shortcodes to displav the related information from Facebook (E.g. Business hours, About Us or the last posts)"
-msgstr "Alternativ können Sie auch shortcodes verwenden um die erforderlichen Informationen aus Facebook darzustellen (z.B. Öffnungszeiten, Über uns oder die letzten Beiträge) "
+msgstr "Alternativ können auch Shortcodes verwendet werden um die erforderlichen Informationen aus Facebook darzustellen (z.B. Öffnungszeiten, Über uns oder die letzten Beiträge) "
 
 msgid "Some information has been updated on Facebook"
 msgstr "Einige informationen wurden auf Facebook aktualisiert"
 
 msgid "Facebook page not found or no access"
 msgstr "Facebook Seite nicht gefunden oder kein Zugriff"
+
+msgid "Navigate to Appearance -> Widgets and configure the %s widget as desired"
+msgstr "Navigiere zu Design -> Widgets und konfiguriere das %s Widget wie gewünscht"

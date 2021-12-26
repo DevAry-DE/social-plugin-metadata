@@ -468,7 +468,9 @@ class SocialPlugin extends FacebookRestApi
      */
     public function settings_page_content()
     {
-        $pages = get_option(self::$WP_OPTION_PAGES, []);
+        $plugin_data = get_plugin_data(__FILE__);
+        $plugin_version = $plugin_data['Version'];
+
         ?>
         <h2><?php _e('Social Plugin - Metadata', 'social-plugin-metadata') ?></h2>
         <div id="fb-pageinfo-alert" class="notice">
@@ -504,6 +506,8 @@ class SocialPlugin extends FacebookRestApi
                 </div>
             </div>
             <div style="margin: 1em; flex-basis: 375px; flex-grow: 1">
+                <h3><?php _e('Widgets', 'social-plugin-metadata') ?></h3>
+                <p><?php echo sprintf(__('Navigate to Appearance -> Widgets and configure the %s widget as desired', 'social-plugin-metadata'), __('Social Plugin - Metadata', 'social-plugin-metadata')) ?>.</p>
                 <h3><?php _e('Shortcodes', 'social-plugin-metadata') ?></h3>
                 <p><?php _e('Optionally you can also use shortcodes to displav the related information from Facebook (E.g. Business hours, About Us or the last posts)', 'social-plugin-metadata') ?>.</p>
                 <div style="font-family: monospace">
@@ -525,6 +529,7 @@ class SocialPlugin extends FacebookRestApi
                 <p>Futhermore the data protection policy from facebook applies for the given Facebook App</p>
             </div>
         </div>
+        <div><small><?php _e('Social Plugin - Metadata', 'social-plugin-metadata') ?> Version: <?php echo $plugin_version ?></small></div>
         <?php
     }
 }
