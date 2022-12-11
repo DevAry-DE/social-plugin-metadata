@@ -338,7 +338,12 @@ class SocialPlugin extends FacebookRestApi
                 $friendlyDiff = $diff->format(__('%d days ago', 'social-plugin-metadata'));
             }
             if ($diffSeconds > (60 * 60 * 24 * 3)) {
-                $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
+                if (class_exists('IntlDateFormatter')) {
+                    $formatter = new \IntlDateFormatter(get_locale(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+                    $friendlyDiff = $formatter->format($created->getTimestamp());
+                } else {
+                    $friendlyDiff = date('Y-m-d', $created->getTimestamp());
+                }
             }
 
             if (!empty($maxWords)) {
