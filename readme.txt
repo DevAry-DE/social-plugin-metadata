@@ -2,9 +2,9 @@
 Contributors: ole1986
 Tags: facebook, show, page info, meta data
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv3
 
 Display meta information from the social network "Facebook" containing Business Hours, About details, Last public post, etc...

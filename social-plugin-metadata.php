@@ -6,7 +6,7 @@ use Cloud86\WP\Social\Model\FacebookRestApi;
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
@@ -338,7 +338,12 @@ class SocialPlugin extends FacebookRestApi
                 $friendlyDiff = $diff->format(__('%d days ago', 'social-plugin-metadata'));
             }
             if ($diffSeconds > (60 * 60 * 24 * 3)) {
-                $friendlyDiff = gmstrftime('%x', $created->getTimestamp());
+                if (class_exists('IntlDateFormatter')) {
+                    $formatter = new \IntlDateFormatter(get_locale(), \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+                    $friendlyDiff = $formatter->format($created->getTimestamp());
+                } else {
+                    $friendlyDiff = date('Y-m-d', $created->getTimestamp());
+                }
             }
 
             if (!empty($maxWords)) {
