@@ -7,7 +7,7 @@ use DateTime;
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
@@ -403,7 +403,7 @@ class SocialPlugin extends FacebookRestApi
 
         if (empty($data)) {
             ?>
-            <?php echo (empty($options['empty_message']) ? __('Currently there are no events posted on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no events posted on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
             <?php
             return;
         }
