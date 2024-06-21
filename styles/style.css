@@ -1,7 +1,9 @@
 /* Business hours */
 .social-plugin-metadata-hours {
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
+
 .social-plugin-metadata-days {
     display: flex;
     justify-content: space-between;
@@ -24,4 +26,26 @@
 
 .social-plugin-metadata-lastpost-created {
     font-weight: 600;
+}
+
+.social-plugin-metadata-events {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-plugin-metadata-event {
+    margin: 0.4em;
+    padding: 0.8em;
+    border-radius: 15px;
+    background-color: #e5e5e5;
+}
+
+.social-plugin-metadata-event-title {
+    font-weight: bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 290px;
+    white-space: nowrap;
 }

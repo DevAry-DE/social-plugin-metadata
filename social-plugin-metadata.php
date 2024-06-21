@@ -2,11 +2,12 @@
 namespace Cloud86\WP\Social;
 
 use Cloud86\WP\Social\Model\FacebookRestApi;
+use DateTime;
 
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
@@ -127,6 +128,11 @@ class SocialPlugin extends FacebookRestApi
         add_shortcode('social-lastpost', function ($atts, $content, $tag) {
             return $this->shortcodeCallback('LastPost', $atts, $content, $tag);
         });
+
+        // [social-events page_id="<page>"]
+        add_shortcode('social-events', function ($atts, $content, $tag) {
+            return $this->shortcodeCallback('Events', $atts, $content, $tag);
+        });
     }
 
     private function shortcodeCallback($option, $atts, $content, $tag)
@@ -187,6 +193,9 @@ class SocialPlugin extends FacebookRestApi
             break;
         case 'LastPost':
             $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time,status_type&limit='. ($options['limit'] ?? '') .'&access_token=' . $currentPage['access_token']);
+            break;
+        case "Events":
+            $result = $this->fbGraphRequest($currentPage['id'] . '/events?fields=category,name,start_time,end_time'. ($options['upcoming'] ? '&since=' . time() : '') . ($options['limit'] ? '&limit=' . intval($options['limit']) : '') . '&access_token=' . $currentPage['access_token']);
             break;
         }
 
@@ -310,7 +319,7 @@ class SocialPlugin extends FacebookRestApi
 
         if (empty($page['data'])) {
             ?>
-            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no updated posted available on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
+            <div class="social-plugin-metadata-empty" style="text-align: center"><?php echo (empty($options['empty_message']) ? __('Currently there are no posts available on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?></div>
             <?php
             return;
         }
@@ -373,6 +382,55 @@ class SocialPlugin extends FacebookRestApi
             <?php
         }
 
+        echo '</div>';
+    }
+
+    public function showEvents($events, $options = []) 
+    {
+        $data = $events['data'];
+
+        $data = array_filter($data, function ($v) use ($options) {
+            if (!empty($options['category']) && $v['category'] != strtoupper($options['category'])) {
+                return false;
+            }
+            if (!empty($options['filter']) && stripos($v['name'], $options['filter']) === false) {
+                return false;
+            }
+            return true;
+        });
+
+        echo '<div class="social-plugin-metadata-events">';
+
+        if (empty($data)) {
+            ?>
+            <?php echo (empty($options['empty_message']) ? __('Currently there are no events posted on Facebook', 'social-plugin-metadata') : esc_attr($options['empty_message'])); ?>
+            <?php
+            return;
+        }
+
+        foreach ($data as $event) {
+            $start = new DateTime($event['start_time']);
+            $end = new DateTime($event['end_time']);
+            
+            if (empty($options['date_format_end'])) {
+                $options['date_format_end'] = $options['date_format'] ?? 'Y-m-d H:i';
+            }
+            if (empty($options['date_format_start'])) {
+                $options['date_format_start'] = $options['date_format'] ?? 'Y-m-d H:i';
+            }
+
+            $startFmt = $start->format($options['date_format_start']);
+            $endFmt = $end->format($options['date_format_end']);
+            ?>
+            <div class="social-plugin-metadata-event">
+                <div class="social-plugin-metadata-event-title"><?php echo $event['name'] ?></div>
+                <div class="social-plugin-metadata-event-dates">
+                    <span><?php echo $startFmt ?></span>
+                    <span><?php echo $endFmt ?></span>
+                </div>
+            </div>
+            <?php
+        }
         echo '</div>';
     }
 
