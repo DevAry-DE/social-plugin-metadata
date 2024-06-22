@@ -7,7 +7,7 @@ use DateTime;
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
