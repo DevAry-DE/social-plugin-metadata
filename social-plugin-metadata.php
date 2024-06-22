@@ -7,7 +7,7 @@ use DateTime;
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
@@ -195,7 +195,7 @@ class SocialPlugin extends FacebookRestApi
             $result = $this->fbGraphRequest($currentPage['id'] . '/published_posts?fields=message,permalink_url,created_time,status_type&limit='. ($options['limit'] ?? '') .'&access_token=' . $currentPage['access_token']);
             break;
         case "Events":
-            $result = $this->fbGraphRequest($currentPage['id'] . '/events?fields=category,name,start_time,end_time'. ($options['upcoming'] ? '&since=' . time() : '') . ($options['limit'] ? '&limit=' . intval($options['limit']) : '') . '&access_token=' . $currentPage['access_token']);
+            $result = $this->fbGraphRequest($currentPage['id'] . '/events?fields=id,category,name,start_time,end_time'. ($options['upcoming'] ? '&since=' . time() : '') . ($options['limit'] ? '&limit=' . intval($options['limit']) : '') . '&access_token=' . $currentPage['access_token']);
             break;
         }
 
@@ -423,7 +423,15 @@ class SocialPlugin extends FacebookRestApi
             $endFmt = $end->format($options['date_format_end']);
             ?>
             <div class="social-plugin-metadata-event">
-                <div class="social-plugin-metadata-event-title"><?php echo $event['name'] ?></div>
+                <div class="social-plugin-metadata-event-title">
+                    <?php if (!empty($options['link'])) : ?>
+                        <a href="<?php echo $this->facebookUrl . 'events/' . $event['id'] ?>" target="_blank">
+                    <?php endif ?>
+                    <?php echo $event['name'] ?>
+                    <?php if (!empty($options['link'])) : ?>
+                        </a>
+                    <?php endif ?>
+                </div>
                 <div class="social-plugin-metadata-event-dates">
                     <span><?php echo $startFmt ?></span>
                     <span><?php echo $endFmt ?></span>
@@ -579,6 +587,7 @@ class SocialPlugin extends FacebookRestApi
                             <li>[social-businesshours page_id="..." empty_message=""]</li>
                             <li>[social-about page_id="..." empty_message=""]</li>
                             <li>[social-lastpost page_id="..." limit="..." max_age="..." empty_message=""]</li>
+                            <li>[social-events page_id="..." filter="..." category="..." link=1 limit=3 upcoming=1 date_format(_start|_end)="..."]</li>
                         </ul>
                     </div>
                 </div>

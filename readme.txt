@@ -4,7 +4,7 @@ Tags: facebook, show, page info, meta data
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv3
 
 Display meta information from the social network "Facebook" containing Business Hours, About details, Last public post, etc...
@@ -42,6 +42,7 @@ If you prefer to use Shortcodes, the below options are available
 [social-businesshours page_id="..." empty_message=""]
 [social-about page_id="..." empty_message=""]
 [social-lastpost page_id="..." limit="..." max_age="..." empty_message=""]
+[social-events page_id="..." filter="..." category="..." link=1 limit=3 upcoming=1 date_format(_start|_end)="..."]
 
 == Screenshots ==
 
