@@ -42,6 +42,7 @@ If you prefer to use Shortcodes, the below options are available
 [social-businesshours page_id="..." empty_message=""]
 [social-about page_id="..." empty_message=""]
 [social-lastpost page_id="..." limit="..." max_age="..." empty_message=""]
+[social-events page_id="..." filter="..." category="..." link=1 limit=3 upcoming=1 date_format(_start|_end)="..."]
 
 == Screenshots ==
 

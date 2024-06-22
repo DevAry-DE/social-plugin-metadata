@@ -4,6 +4,10 @@ namespace Cloud86\WP\Social\Model;
 
 abstract class FacebookRestApi
 {
+    private $graphUrl = 'https://graph.facebook.com/';
+
+    public $facebookUrl = 'https://facebook.com/';
+
     abstract public function getAppID();
     abstract public function getAppSecret();
 
@@ -121,12 +125,10 @@ abstract class FacebookRestApi
 
     public function fbGraphRequest($url, $doPost = false)
     {
-        $path = 'https://graph.facebook.com/';
-
         if ($doPost) {
-            $resp = wp_remote_post($path . $url);
+            $resp = wp_remote_post($this->graphUrl . $url);
         } else {
-            $resp = wp_remote_get($path . $url);
+            $resp = wp_remote_get($this->graphUrl . $url);
         }
 
         if ($resp instanceof \WP_Error) {
