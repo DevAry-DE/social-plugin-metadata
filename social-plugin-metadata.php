@@ -7,7 +7,7 @@ use DateTime;
 /**
  * Plugin Name: Social Plugin - Metadata
  * Description: Used to display Facebook related page meta information as widget or shortcode (E.g. Business hours, About Us, Last Post)
- * Version: 1.1.4
+ * Version: 1.1.5
  * Author:      ole1986
  * License: MIT <https://raw.githubusercontent.com/Cloud-86/social-plugin-metadata/master/LICENSE>
  * Text Domain: social-plugin-metadata
@@ -263,7 +263,9 @@ class SocialPlugin extends FacebookRestApi
 
         echo '<div class="social-plugin-metadata-hours">';
         foreach ($result as $k => $v) {
-            echo '<div class="social-plugin-metadata-days">';
+            $today = strtolower((new DateTime())->format('D'));
+
+            echo '<div class="social-plugin-metadata-days ' . (($today == $k) ? 'social-plugin-metadata-today' : '') . '">';
             echo "<div>" . $mapDayNames[$k] . "</div>";
             echo '<div class="social-plugin-metadata-hours-times">';
             foreach ($v as $value) {
